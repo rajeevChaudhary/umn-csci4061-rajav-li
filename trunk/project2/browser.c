@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -60,7 +61,7 @@ void uri_entered_cb(GtkWidget* entry, gpointer data)
  *			redirects the request to the parent (/router) process
  *			which then creates a new child process for creating
  *			and managing this new tab.
- */ 
+ */
 void new_tab_created_cb(GtkButton *button, gpointer data)
 
 {
@@ -76,10 +77,32 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 
 }
 
+// Returns 1 on success or 0 on failure.
+void fork_controller(int pipe_fildes[2])
+
+{
+    if (pipe(pipe_fildes) == -1)
+    {
+        perror("fork_controller: Failed to create the pipe");
+        return 0;
+    }
+    else
+    {
+        //fork
+    }
+}
+
+
 int main()
 
 {
-	// Append your code here
+	/** <ROUTER> **/
+
+	// index 0 is CONTROLLER pipe
+	// indices 1-10 are URL-RENDERING pipes
+	int child_pipes[11][2];
+
+    fork_controller(child_pipes[0]);
 
 	return 0;
 }
