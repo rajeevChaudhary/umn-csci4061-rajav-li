@@ -1,5 +1,9 @@
-#define PARENT 10
-#define CHILD 11
+// Arbitrary; must be > 0
+#define PARENT 1
+#define CHILD 2
+
+//Configuration
+#define MAX_TABS 10
 
 #include "wrapper.h"
 #include <sys/types.h>
@@ -80,45 +84,37 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 
 }
 
-// Forking call -- returns PARENT, CHILD, or 0 for failure
+
+// Forking function -- returns PARENT, CHILD, or 0 for failure
 int fork_controller(int pipe_fildes[2])
 
 {
-    int ret;
-
     if (pipe(pipe_fildes) == -1)
     {
         perror("fork_controller: Failed to create the pipe");
         return 0;
     }
     else
-    {
-        pid_t controller_pid = fork();
-
-        if (controller_pid == -1)
+        switch ( fork() )
         {
-            perror("fork_controller: Failed to fork");
-            return 0;
+            case -1:
+                perror("fork_controller: Failed to fork");
+                return 0;
+                
+            case 0:     //@ Parent code (ROUTER)
+                return PARENT;
+                
+            default:    //@ Child code (CONTROLLER)
+                show_browser();  //Blocking call; returns when CONTROLLER window is closed
+                return CHILD;
         }
-
-        if (controller_pid)     // Parent code (ROUTER)
-            ret = PARENT;
-        else                    // Child code (CONTROLLER)
-        {
-            ret = CHILD;
-            show_browser(); //Blocking call; returns when CONTROLLER window is closed
-        }
-    }
-
-    return ret;
 }
 
 
-int main()
+// Forking function -- returns PARENT, CHILD, or 0 for failure
+int poll_children(int controller_pipe[2])
 
 {
-	/** <ROUTER> **/
-
     // child_pipes[x][y]
     // x: Processes
     // y: pipe fd's
@@ -126,17 +122,41 @@ int main()
     // -- Processes --
 	// Index 0 is CONTROLLER pipe
 	// Indices 1-10 are URL-RENDERING pipes
-	int child_pipes[11][2];
-	// Whether or not the indexed child exists
-	bool child_exist[11];
+    int child_pipes[MAX_TABS + 1][2] = { controller_pipe };  // Controller_pipe at index 0
 
-	// Initialize the child_exist array; none of them exist yet
-	for (int i = 0; i < 11; i++)
-        child_exist[i] = false;
+    for (int i = 1; i < MAX_TABS + 1; i++)
+        child_pipes[i] = NULL;
+    
+    // Loop through child_pipes and read for new messages to pass on
+    // Fork new tab if necessary and return CHILD
+}
 
-    if (fork_controller(child_pipes[0]))
+
+int main()
+
+{
+    /* //@ marks fork points */
+    
+	//@ ALL
+    
+	int controller_pipe[2];
+
+    switch ( fork_controller(controller_pipe) )
     {
-        child_exist[0] = true;
+        case PARENT:    //@ ROUTER
+            child_exist[0] = true;
+            poll_children(controller_pipe);
+            break;
+            
+        case CHILD:     //@ CONTROLLER
+            // At this point CONTROLLER is exiting
+            break;
+            
+        case 0:
+        default:
+            // Exit if failed
+            perror("main: Call to fork_controller() failed");
+            return 1;
     }
 
 	return 0;
