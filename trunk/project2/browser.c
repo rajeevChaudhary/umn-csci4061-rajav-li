@@ -1,3 +1,6 @@
+#define PARENT 10
+#define CHILD 11
+
 #include "wrapper.h"
 #include <sys/types.h>
 #include <unistd.h>
@@ -77,10 +80,12 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 
 }
 
-// Returns 1 on success or 0 on failure.
-void fork_controller(int pipe_fildes[2])
+// Forking call -- returns PARENT, CHILD, or 0 for failure
+int fork_controller(int pipe_fildes[2])
 
 {
+    int ret;
+
     if (pipe(pipe_fildes) == -1)
     {
         perror("fork_controller: Failed to create the pipe");
@@ -88,8 +93,24 @@ void fork_controller(int pipe_fildes[2])
     }
     else
     {
-        //fork
+        pid_t controller_pid = fork();
+
+        if (controller_pid == -1)
+        {
+            perror("fork_controller: Failed to fork");
+            return 0;
+        }
+
+        if (controller_pid)     // Parent code (ROUTER)
+            ret = PARENT;
+        else                    // Child code (CONTROLLER)
+        {
+            ret = CHILD;
+            show_browser(); //Blocking call; returns when CONTROLLER window is closed
+        }
     }
+
+    return ret;
 }
 
 
@@ -98,11 +119,25 @@ int main()
 {
 	/** <ROUTER> **/
 
-	// index 0 is CONTROLLER pipe
-	// indices 1-10 are URL-RENDERING pipes
+    // child_pipes[x][y]
+    // x: Processes
+    // y: pipe fd's
+    //
+    // -- Processes --
+	// Index 0 is CONTROLLER pipe
+	// Indices 1-10 are URL-RENDERING pipes
 	int child_pipes[11][2];
+	// Whether or not the indexed child exists
+	bool child_exist[11];
 
-    fork_controller(child_pipes[0]);
+	// Initialize the child_exist array; none of them exist yet
+	for (int i = 0; i < 11; i++)
+        child_exist[i] = false;
+
+    if (fork_controller(child_pipes[0]))
+    {
+        child_exist[0] = true;
+    }
 
 	return 0;
 }
