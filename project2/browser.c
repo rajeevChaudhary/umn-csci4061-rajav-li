@@ -34,11 +34,7 @@ bool channel_alive[UNRECLAIMED_TAB_COUNTER + 1];
 
 void uri_entered_cb(GtkWidget* entry, gpointer data)
 {
-	//declare
-	pid_t pid;
-	char r_buf[10];
-	childexit = 0;
-    int i;
+
 	
 	
 	if(!data)
@@ -55,13 +51,17 @@ void uri_entered_cb(GtkWidget* entry, gpointer data)
     
 	// Get the URL.
 	char* uri = get_entered_uri(entry);
-    
+    child_req_to_parent new_req;
+	
 	// Prepare 'request' packet to send to router (/parent) process.
     
     
-    
     // Create a child_req_to_parent with req set to a child_request set to a new_uri_req
-    // Write that child_req_to_parent to the pipe at channel.child_to_parent_fd[WRITE]
+
+	req.req.uri_reg.uri = uri
+   
+	    // Write that child_req_to_parent to the pipe at channel.child_to_parent_fd[WRITE]
+	write(comm_channel.child_to_parent_fd[WRITE], req, sizeof(child_req_to_parent));
 } 
 
 
@@ -100,7 +100,10 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 
     
     // Set new_req to the appropriate tab_index (tab_index is set above for you)
+	new_req.req.new_tab_req.tab_index = tab_index
+	
     // Write the child_req_to_parent to the pipe at channel.child_to_parent_fd[WRITE]
+	write(comm_channel.child_to_parent_fd[WRITE], req, sizeof(child_req_to_parent));
 }
 
 
