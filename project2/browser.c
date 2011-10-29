@@ -2,8 +2,8 @@
 #define PARENT 1
 #define CHILD 2
 
-//Configuration
-#define MAX_TABS 10
+#define READ 0
+#define WRITE 1
 
 #include "wrapper.h"
 #include <sys/types.h>
@@ -16,7 +16,8 @@
 #include <errno.h>
 
 extern int errno;
-comm_channel channel[UNRECLAIMED_TAB_COUNTER];
+comm_channel channel[UNRECLAIMED_TAB_COUNTER + 1];
+bool channel_alive[UNRECLAIMED_TAB_COUNTER + 1];
 
 /*
  * Name:		uri_entered_cb
@@ -86,15 +87,19 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 
 
 // Forking function -- returns PARENT, CHILD, or 0 for failure
-int fork_controller(int pipe_fildes[2])
+int fork_controller()
 
 {
-    if (pipe(pipe_fildes) == -1)
+    if (pipe(channel[0].parent_to_child_fd) == -1 ||
+        pipe(channel[0].child_to_parent_fd) == -1)
     {
-        perror("fork_controller: Failed to create the pipe");
+        perror("fork_controller: Failed to create one or both pipes");
         return 0;
     }
     else
+    {
+        channel_alive[0] = true;
+        
         switch ( fork() )
         {
             case -1:
@@ -102,33 +107,55 @@ int fork_controller(int pipe_fildes[2])
                 return 0;
                 
             case 0:     //@ Parent code (ROUTER)
+                close(channel[0].parent_to_child_fd[READ]);
+                close(channel[0].child_to_parent_fd[WRITE]);
+                                
+                fcntl(channel[0].child_to_parent_fd[READ], F_SETFL, O_NONBLOCK);
+                
                 return PARENT;
                 
             default:    //@ Child code (CONTROLLER)
+                close(channel[0].child_to_parent_fd[READ]);
+                close(channel[0].parent_to_child_fd[WRITE]);
+                
+                create_browser(CONTROLLER_TAB, 0, &new_tab_created_cb, &uri_entered_cb, NULL, channel[0]);
                 show_browser();  //Blocking call; returns when CONTROLLER window is closed
+                
                 return CHILD;
         }
+    }
 }
 
 
 // Forking function -- returns PARENT, CHILD, or 0 for failure
-int poll_children(int controller_pipe[2])
+int poll_children()
 
 {
-    // child_pipes[x][y]
-    // x: Processes
-    // y: pipe fd's
-    //
-    // -- Processes --
-	// Index 0 is CONTROLLER pipe
-	// Indices 1-10 are URL-RENDERING pipes
-    int child_pipes[MAX_TABS + 1][2] = { controller_pipe };  // Controller_pipe at index 0
-
-    for (int i = 1; i < MAX_TABS + 1; i++)
-        child_pipes[i] = NULL;
+    for (int i = 1; i < UNRECLAIMED_TAB_COUNTER + 1; i++)
+    {
+        channel[i] = NULL;
+        channel_alive[i] = false;
+    }
     
     // Loop through child_pipes and read for new messages to pass on
     // Fork new tab if necessary and return CHILD
+    child_req_to_parent req = malloc(sizeof(child_req_to_parent));
+    bool at_least_one_alive;
+    int i;
+    
+    do
+    {
+        at_least_one_alive = false;
+        
+        for (i = 0; i < UNRECLAIMED_TAB_COUNTER + 1; i++) {
+            if (channel_alive[i]) {
+                at_least_one_alive = true;
+                read(channel[i].child_to_parent_fd[READ], &req, sizeof(child_req_to_parent));
+            }
+        }
+        
+        usleep(1);
+    } while (at_least_one_alive);
 }
 
 
@@ -138,18 +165,16 @@ int main()
     /* //@ marks fork points */
     
 	//@ ALL
-    
-	int controller_pipe[2];
 
-    switch ( fork_controller(controller_pipe) )
+    switch ( fork_controller() )
     {
         case PARENT:    //@ ROUTER
             child_exist[0] = true;
-            poll_children(controller_pipe);
+            poll_children();
             break;
             
         case CHILD:     //@ CONTROLLER
-            // At this point CONTROLLER is exiting
+            // At this point CONTROLLER is exiting, so do nothing
             break;
             
         case 0:
