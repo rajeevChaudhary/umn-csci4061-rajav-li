@@ -118,7 +118,7 @@ int fork_controller()
                 close(channel[0].child_to_parent_fd[READ]);
                 close(channel[0].parent_to_child_fd[WRITE]);
                 
-                create_browser(CONTROLLER_TAB, 0, &new_tab_created_cb, &uri_entered_cb, NULL, channel[0]);
+                create_browser(CONTROLLER_TAB, 0, (void*)&new_tab_created_cb, (void*)&uri_entered_cb, NULL, channel[0]);
                 show_browser();  //Blocking call; returns when CONTROLLER window is closed
                 
                 return CHILD;
@@ -131,17 +131,15 @@ int fork_controller()
 int poll_children()
 
 {
-    for (int i = 1; i < UNRECLAIMED_TAB_COUNTER + 1; i++)
-    {
-        channel[i] = NULL;
+    int i;
+
+    for (i = 1; i < UNRECLAIMED_TAB_COUNTER + 1; i++)
         channel_alive[i] = false;
-    }
     
     // Loop through child_pipes and read for new messages to pass on
     // Fork new tab if necessary and return CHILD
-    child_req_to_parent req = malloc(sizeof(child_req_to_parent));
+    child_req_to_parent* req = malloc(sizeof(child_req_to_parent));
     bool at_least_one_alive;
-    int i;
     
     do
     {
@@ -150,12 +148,14 @@ int poll_children()
         for (i = 0; i < UNRECLAIMED_TAB_COUNTER + 1; i++) {
             if (channel_alive[i]) {
                 at_least_one_alive = true;
-                read(channel[i].child_to_parent_fd[READ], &req, sizeof(child_req_to_parent));
+                read(channel[i].child_to_parent_fd[READ], req, sizeof(child_req_to_parent));
             }
         }
         
         usleep(1);
     } while (at_least_one_alive);
+
+    return PARENT;
 }
 
 
@@ -169,7 +169,6 @@ int main()
     switch ( fork_controller() )
     {
         case PARENT:    //@ ROUTER
-            child_exist[0] = true;
             poll_children();
             break;
             
