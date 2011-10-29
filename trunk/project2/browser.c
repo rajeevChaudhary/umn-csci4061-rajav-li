@@ -147,10 +147,28 @@ int poll_children()
     {
         at_least_one_alive = false;
         
-        for (i = 0; i < UNRECLAIMED_TAB_COUNTER + 1; i++) {
-            if (channel_alive[i]) {
+        for (i = 0; i < UNRECLAIMED_TAB_COUNTER + 1; i++)
+        {
+            if (channel_alive[i])
+            {
                 at_least_one_alive = true;
-                read(channel[i].child_to_parent_fd[READ], req, sizeof(child_req_to_parent));
+                if (read(channel[i].child_to_parent_fd[READ], req, sizeof(child_req_to_parent)) != -1)
+                    switch (req->type) {
+                        case CREATE_TAB:
+                            printf("CREATE_TAB");
+                            break;
+                            
+                        case NEW_URI_ENTERED:
+                            printf("NEW_URI_ENTERED");
+                            break;
+                            
+                        case TAB_KILLED:
+                            printf("TAB_KILLED");
+                            break;
+                            
+                        default:
+                            break;
+                    }
             }
         }
         
