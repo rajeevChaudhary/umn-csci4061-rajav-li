@@ -164,6 +164,8 @@ int poll_children()
                             
                         case TAB_KILLED:
                             printf("TAB_KILLED");
+                            close(channel[i].child_to_parent_fd[READ];
+                            channel_alive[i] = false;
                             break;
                             
                         default:
