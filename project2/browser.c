@@ -2,8 +2,8 @@
 #define PARENT 1
 #define CHILD 2
 
-#define READ 0
-#define WRITE 1
+//Configuration
+#define MAX_TABS 10
 
 #include "wrapper.h"
 #include <sys/types.h>
@@ -16,8 +16,8 @@
 #include <errno.h>
 
 extern int errno;
-comm_channel channel[UNRECLAIMED_TAB_COUNTER + 1];
-bool channel_alive[UNRECLAIMED_TAB_COUNTER + 1];
+comm_channel channel[UNRECLAIMED_TAB_COUNTER];
+
 
 /*
  * Name:		uri_entered_cb
@@ -34,6 +34,13 @@ bool channel_alive[UNRECLAIMED_TAB_COUNTER + 1];
 
 void uri_entered_cb(GtkWidget* entry, gpointer data)
 {
+	//declare
+	pid_t pid;
+	char r_buf[10];
+	childexit = 0;
+    int i;
+	
+	
 	if(!data)
 		return;
 	browser_window* b_window = (browser_window*)data;
@@ -43,14 +50,46 @@ void uri_entered_cb(GtkWidget* entry, gpointer data)
 	if(tab_index <= 0)
 	{
 		//Append code for error handling
+	
 	}
 
 	// Get the URL.
 	char* uri = get_entered_uri(entry);
 
 	// Prepare 'request' packet to send to router (/parent) process.
-	// Append your code here
-}
+
+	if(pipe(Controller_pipe)<0)
+	{
+		printf("pipe create error ");
+		return -1;
+	} 
+	
+	// Parent gets URL from Controller. 
+	if((pid=fork())>0)
+	{
+		close(Controller_pipe[1]);
+		sleep(4);
+		
+		while(!childexit)
+		{
+			read(Controller_pipe[0],r_buf,10);
+			sleep(1);
+		}
+		close(Controller_pipe[0]);
+		exit(1);
+	}
+	else if(pid==0)
+		//child: send URL to parent
+	{
+	
+		close(Controller_pipe[0]);
+		write(Controller_pipe[1],entry,sizeof(entry));
+		close(Controller_pipe[1]);
+	}
+	return 0;
+} 
+
+
 
 
 
@@ -82,24 +121,51 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 
         child_req_to_parent new_req;
 	//Append your code here
+	
+	//Created a child_pipes
+	if(pipe(child_pipes)<0)
+	{
+		printf("pipe create error ");
+		return -1;
+	} 
+	
+	
+	// Get killed sign from child process, 父进程：解析从管道中获取的命令，并作相应的处理
+	if((pid=fork())>0)
+	{
+		close(child_pipes[1]);
+		sleep(4);
+		
+		while(!childexit)
+		{
+			read(child_pipes[0],tab_killed_req, );
+				}
+		close(pipe_fd[0]);
+		exit(1);
+	}
+	else if(pid==0)
+		//child: send commands to parent
+	{
+		close(child_pipes[0]);
+		write(child_pipes, , );
+		close(child_pipes[1]);
+	}
+	return 0;
+	
 
 }
 
 
 // Forking function -- returns PARENT, CHILD, or 0 for failure
-int fork_controller()
+int fork_controller(int pipe_fildes[2])
 
 {
-    if (pipe(channel[0].parent_to_child_fd) == -1 ||
-        pipe(channel[0].child_to_parent_fd) == -1)
+    if (pipe(pipe_fildes) == -1)
     {
-        perror("fork_controller: Failed to create one or both pipes");
+        perror("fork_controller: Failed to create the pipe");
         return 0;
     }
     else
-    {
-        channel_alive[0] = true;
-        
         switch ( fork() )
         {
             case -1:
@@ -107,77 +173,33 @@ int fork_controller()
                 return 0;
                 
             case 0:     //@ Parent code (ROUTER)
-                close(channel[0].parent_to_child_fd[READ]);
-                close(channel[0].child_to_parent_fd[WRITE]);
-                                
-                fcntl(channel[0].child_to_parent_fd[READ], F_SETFL, O_NONBLOCK);
-                
                 return PARENT;
                 
             default:    //@ Child code (CONTROLLER)
-                close(channel[0].child_to_parent_fd[READ]);
-                close(channel[0].parent_to_child_fd[WRITE]);
-                
-                browser_window* bwindow;
-                
-                create_browser(CONTROLLER_TAB, 0, (void*)&new_tab_created_cb, (void*)&uri_entered_cb, &bwindow, channel[0]);
                 show_browser();  //Blocking call; returns when CONTROLLER window is closed
-                
                 return CHILD;
         }
-    }
 }
 
 
 // Forking function -- returns PARENT, CHILD, or 0 for failure
-int poll_children()
+int poll_children(int controller_pipe[2])
 
 {
-    int i;
+    // child_pipes[x][y]
+    // x: Processes
+    // y: pipe fd's
+    //
+    // -- Processes --
+	// Index 0 is CONTROLLER pipe
+	// Indices 1-10 are URL-RENDERING pipes
+    int child_pipes[MAX_TABS + 1][2] = { controller_pipe };  // Controller_pipe at index 0
 
-    for (i = 1; i < UNRECLAIMED_TAB_COUNTER + 1; i++)
-        channel_alive[i] = false;
+    for (int i = 1; i < MAX_TABS + 1; i++)
+        child_pipes[i] = NULL;
     
     // Loop through child_pipes and read for new messages to pass on
     // Fork new tab if necessary and return CHILD
-    child_req_to_parent* req = malloc(sizeof(child_req_to_parent));
-    bool at_least_one_alive;
-    
-    do
-    {
-        at_least_one_alive = false;
-        
-        for (i = 0; i < UNRECLAIMED_TAB_COUNTER + 1; i++)
-        {
-            if (channel_alive[i])
-            {
-                at_least_one_alive = true;
-                if (read(channel[i].child_to_parent_fd[READ], req, sizeof(child_req_to_parent)) != -1)
-                    switch (req->type) {
-                        case CREATE_TAB:
-                            printf("CREATE_TAB");
-                            break;
-                            
-                        case NEW_URI_ENTERED:
-                            printf("NEW_URI_ENTERED");
-                            break;
-                            
-                        case TAB_KILLED:
-                            printf("TAB_KILLED");
-                            close(channel[i].child_to_parent_fd[READ]);
-                            channel_alive[i] = false;
-                            break;
-                            
-                        default:
-                            break;
-                    }
-            }
-        }
-        
-        usleep(1);
-    } while (at_least_one_alive);
-
-    return PARENT;
 }
 
 
@@ -187,15 +209,18 @@ int main()
     /* //@ marks fork points */
     
 	//@ ALL
+    
+	int controller_pipe[2];
 
-    switch ( fork_controller() )
+    switch ( fork_controller(controller_pipe) )
     {
         case PARENT:    //@ ROUTER
-            poll_children();
+            child_exist[0] = true;
+            poll_children(controller_pipe);
             break;
             
         case CHILD:     //@ CONTROLLER
-            // At this point CONTROLLER is exiting, so do nothing
+            // At this point CONTROLLER is exiting
             break;
             
         case 0:
