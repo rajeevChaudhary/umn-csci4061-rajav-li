@@ -118,7 +118,9 @@ int fork_controller()
                 close(channel[0].child_to_parent_fd[READ]);
                 close(channel[0].parent_to_child_fd[WRITE]);
                 
-                create_browser(CONTROLLER_TAB, 0, (void*)&new_tab_created_cb, (void*)&uri_entered_cb, NULL, channel[0]);
+                browser_window* bwindow;
+                
+                create_browser(CONTROLLER_TAB, 0, (void*)&new_tab_created_cb, (void*)&uri_entered_cb, &bwindow, channel[0]);
                 show_browser();  //Blocking call; returns when CONTROLLER window is closed
                 
                 return CHILD;
