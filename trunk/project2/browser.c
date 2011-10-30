@@ -93,26 +93,14 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 	if(!data)
 		return;
     
- 	int tab_index = ((browser_window*)data)->tab_index;
-    if (tab_index < 1)
-    {
-        perror("new_tab_created_cb: Invalid tab index");
-        return;
-    }
-    
 	comm_channel channel = ((browser_window*)data)->channel;
     
 	// Create a new request of type CREATE_TAB
     
     child_req_to_parent new_req;
 	//Append your code here
-	
 
 	new_req.type = CREATE_TAB;
-
-    
-    // Set new_req to the appropriate tab_index (tab_index is set above for you)
-	new_req.req.new_tab_req.tab_index = tab_index;
 	
     // Write the child_req_to_parent to the pipe at channel.child_to_parent_fd[WRITE]
 	write(channel.child_to_parent_fd[WRITE], &new_req, sizeof(child_req_to_parent));
@@ -218,6 +206,7 @@ int poll_children()
     // Fork new tab if necessary and return CHILD
     child_req_to_parent req;
     bool at_least_one_alive;
+    int current_new_tab_index = 1;
     
     do
     {
@@ -231,7 +220,11 @@ int poll_children()
                 if (read(channel[i].child_to_parent_fd[READ], &req, sizeof(child_req_to_parent)) != -1)
                     switch (req.type) {
                         case CREATE_TAB:
-                            fork_tab(req.req.new_tab_req.tab_index);
+                            if (current_new_tab_index <= UNRECLAIMED_TAB_COUNTER)
+                            {
+                                fork_tab(current_new_tab_index);
+                                current_new_tab_index++;
+                            }
                             break;
                             
                         case NEW_URI_ENTERED:
