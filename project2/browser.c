@@ -110,7 +110,7 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 
 void controller_flow()
 {
-    browser_window* bwindow;
+    browser_window* bwindow = NULL;
     
     create_browser(CONTROLLER_TAB, 0, (void*)&new_tab_created_cb, (void*)&uri_entered_cb, &bwindow, channel[0]);
     show_browser();  //Blocking call; returns when CONTROLLER window is closed
@@ -120,11 +120,11 @@ void controller_flow()
 void tab_flow(int tab_index)
 {
     child_req_to_parent req;
-    browser_window* bwindow;
+    browser_window* bwindow = NULL;
     
     printf("Before\n");
     
-    create_browser(URL_RENDERING_TAB, tab_index, NULL, NULL, &bwindow, channel[tab_index]);
+    create_browser(URL_RENDERING_TAB, tab_index, (void*)&new_tab_created_cb, (void*)&uri_entered_cb, &bwindow, channel[tab_index]);
     
     printf("Got past\n");
     
@@ -133,6 +133,7 @@ void tab_flow(int tab_index)
         if (read(channel[tab_index].parent_to_child_fd[READ], &req, sizeof(child_req_to_parent)) != -1)
             switch (req.type) {
                 case NEW_URI_ENTERED:
+                    printf("New uri\n");
                     render_web_page_in_tab(req.req.uri_req.uri, bwindow);
                     break;
                     
