@@ -187,6 +187,8 @@ int fork_tab(int tab_index)
                 close(channel[tab_index].child_to_parent_fd[READ]);
                 close(channel[tab_index].parent_to_child_fd[WRITE]);
                 
+                fcntl(channel[tab_index].parent_to_child_fd[READ], F_SETFL, O_NONBLOCK);
+                
                 if (tab_index == 0)
                     controller_flow();
                 else
