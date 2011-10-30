@@ -58,10 +58,13 @@ void uri_entered_cb(GtkWidget* entry, gpointer data)
     
     // Create a child_req_to_parent with req set to a child_request set to a new_uri_req
 
-	new_req.req.uri_req.uri = uri;
+	new_req.type = NEW_URI_ENTERED;
+
+	strncpy(new_req.req.uri_req.uri, uri, 511);
+	new_req.req.uri_req.uri[511] = '\0';
    
 	    // Write that child_req_to_parent to the pipe at channel.child_to_parent_fd[WRITE]
-	write(channel.child_to_parent_fd[WRITE], new_req, sizeof(child_req_to_parent));
+	write(channel.child_to_parent_fd[WRITE], &new_req, sizeof(child_req_to_parent));
 } 
 
 
@@ -98,12 +101,14 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 	//Append your code here
 	
 
+	new_req.type = CREATE_TAB;
+
     
     // Set new_req to the appropriate tab_index (tab_index is set above for you)
 	new_req.req.new_tab_req.tab_index = tab_index;
 	
     // Write the child_req_to_parent to the pipe at channel.child_to_parent_fd[WRITE]
-	write(channel.child_to_parent_fd[WRITE], new_req, sizeof(child_req_to_parent));
+	write(channel.child_to_parent_fd[WRITE], &new_req, sizeof(child_req_to_parent));
 }
 
 
@@ -176,15 +181,15 @@ int poll_children()
                 if (read(channel[i].child_to_parent_fd[READ], req, sizeof(child_req_to_parent)) != -1)
                     switch (req->type) {
                         case CREATE_TAB:
-                            printf("CREATE_TAB");
+                            printf("CREATE_TAB\n");
                             break;
                             
                         case NEW_URI_ENTERED:
-                            printf("NEW_URI_ENTERED");
+                            printf("NEW_URI_ENTERED\n");
                             break;
                             
                         case TAB_KILLED:
-                            printf("TAB_KILLED");
+                            printf("TAB_KILLED\n");
                             close(channel[i].child_to_parent_fd[READ]);
                             channel_alive[i] = false;
                             break;
