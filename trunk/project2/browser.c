@@ -92,7 +92,14 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 {
 	if(!data)
 		return;
+    
  	int tab_index = ((browser_window*)data)->tab_index;
+    if (tab_index < 1)
+    {
+        perror("new_tab_created_cb: Invalid tab index");
+        return;
+    }
+    
 	comm_channel channel = ((browser_window*)data)->channel;
     
 	// Create a new request of type CREATE_TAB
