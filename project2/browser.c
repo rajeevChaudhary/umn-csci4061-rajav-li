@@ -113,44 +113,84 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 
 
 // Forking function -- returns PARENT, CHILD, or 0 for failure
-int fork_controller()
+int fork_tab(int tab_index)
 
 {
-    if (pipe(channel[0].parent_to_child_fd) == -1 ||
-        pipe(channel[0].child_to_parent_fd) == -1)
+    if (pipe(channel[tab_index].parent_to_child_fd) == -1 ||
+        pipe(channel[tab_index].child_to_parent_fd) == -1)
     {
-        perror("fork_controller: Failed to create one or both pipes");
+        perror("fork_tab: Failed to create one or both pipes");
         return 0;
     }
     else
     {
-        channel_alive[0] = true;
+        channel_alive[tab_index] = true;
         
         switch ( fork() )
         {
             case -1:
-                perror("fork_controller: Failed to fork");
+                perror("fork_tab: Failed to fork");
                 return 0;
                 
             case 0:     //@ Parent code (ROUTER)
-                close(channel[0].parent_to_child_fd[READ]);
-                close(channel[0].child_to_parent_fd[WRITE]);
+                close(channel[tab_index].parent_to_child_fd[READ]);
+                close(channel[tab_index].child_to_parent_fd[WRITE]);
                                 
-                fcntl(channel[0].child_to_parent_fd[READ], F_SETFL, O_NONBLOCK);
+                fcntl(channel[tab_index].child_to_parent_fd[READ], F_SETFL, O_NONBLOCK);
                 
                 return PARENT;
                 
             default:    //@ Child code (CONTROLLER)
-                close(channel[0].child_to_parent_fd[READ]);
-                close(channel[0].parent_to_child_fd[WRITE]);
+                close(channel[tab_index].child_to_parent_fd[READ]);
+                close(channel[tab_index].parent_to_child_fd[WRITE]);
                 
-                browser_window* bwindow;
-                
-                create_browser(CONTROLLER_TAB, 0, (void*)&new_tab_created_cb, (void*)&uri_entered_cb, &bwindow, channel[0]);
-                show_browser();  //Blocking call; returns when CONTROLLER window is closed
+                if (tab_index == 0)
+                    controller_flow();
+                else
+                    tab_flow(tab_index);
                 
                 return CHILD;
         }
+    }
+}
+
+
+void controller_flow()
+{
+    browser_window* bwindow;
+    
+    create_browser(CONTROLLER_TAB, 0, (void*)&new_tab_created_cb, (void*)&uri_entered_cb, &bwindow, channel[0]);
+    show_browser();  //Blocking call; returns when CONTROLLER window is closed
+}
+
+
+void tab_flow(int tab_index)
+{
+    child_req_to_parent req;
+    browser_window* bwindow;
+    
+    create_browser(URL_RENDERING_TAB, tab_index, NULL, NULL, &bwindow, channel[tab_index]);
+    
+    while()
+    {
+        if (read(channel[tab_index].parent_to_child_fd[READ], &req, sizeof(child_req_to_parent)) != -1)
+            switch (req.type) {
+                case NEW_URI_ENTERED:
+                    render_web_page_in_tab(req.req.uri_req.uri, bwindow);
+                    break;
+                    
+                case TAB_KILLED:
+                    process_all_gtk_events();
+                    return;
+                    
+                case CREATE_TAB:
+                default:
+                    perror("tab_flow: Message ignored");
+                    break;
+            }
+        
+        process_single_gtk_event();
+        usleep(1);
     }
 }
 
@@ -166,7 +206,7 @@ int poll_children()
     
     // Loop through child_pipes and read for new messages to pass on
     // Fork new tab if necessary and return CHILD
-    child_req_to_parent* req = malloc(sizeof(child_req_to_parent));
+    child_req_to_parent req;
     bool at_least_one_alive;
     
     do
@@ -178,18 +218,17 @@ int poll_children()
             if (channel_alive[i])
             {
                 at_least_one_alive = true;
-                if (read(channel[i].child_to_parent_fd[READ], req, sizeof(child_req_to_parent)) != -1)
-                    switch (req->type) {
+                if (read(channel[i].child_to_parent_fd[READ], &req, sizeof(child_req_to_parent)) != -1)
+                    switch (req.type) {
                         case CREATE_TAB:
-                            printf("CREATE_TAB\n");
+                            fork_tab(req.req.new_tab_req.tab_index);
                             break;
                             
                         case NEW_URI_ENTERED:
-                            printf("NEW_URI_ENTERED\n");
+                            write(channel[i].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
                             break;
                             
                         case TAB_KILLED:
-                            printf("TAB_KILLED\n");
                             close(channel[i].child_to_parent_fd[READ]);
                             channel_alive[i] = false;
                             break;
@@ -214,14 +253,14 @@ int main()
     
 	//@ ALL
 
-    switch ( fork_controller() )
+    switch ( fork_tab(0) )
     {
         case PARENT:    //@ ROUTER
             poll_children();
             break;
             
         case CHILD:     //@ CONTROLLER
-            // At this point CONTROLLER is exiting, so do nothing
+            // At this point a child process is done and exiting, so do nothing
             break;
             
         case 0:
