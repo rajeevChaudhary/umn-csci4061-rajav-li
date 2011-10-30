@@ -122,8 +122,12 @@ void tab_flow(int tab_index)
     child_req_to_parent req;
     browser_window* bwindow;
     
+    printf("Before\n");
+    
     create_browser(URL_RENDERING_TAB, tab_index, NULL, NULL, &bwindow, channel[tab_index]);
     show_browser();
+    
+    printf("Got past\n");
     
     for (;;)
     {
