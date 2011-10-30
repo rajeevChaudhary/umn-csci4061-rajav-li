@@ -62,6 +62,8 @@ void uri_entered_cb(GtkWidget* entry, gpointer data)
 
 	strncpy(new_req.req.uri_req.uri, uri, 511);
 	new_req.req.uri_req.uri[511] = '\0';
+    
+    new_rew.req.uri_req.render_in_tab = tab_index;
    
 	    // Write that child_req_to_parent to the pipe at channel.child_to_parent_fd[WRITE]
 	write(channel.child_to_parent_fd[WRITE], &new_req, sizeof(child_req_to_parent));
@@ -233,8 +235,8 @@ int poll_children()
                             break;
                             
                         case NEW_URI_ENTERED:
-                            if (channel_alive[req.req.uri_req.tab_index])
-                                write(channel[req.req.uri_req.tab_index].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
+                            if (channel_alive[req.req.uri_req.render_in_tab])
+                                write(channel[req.req.uri_req.render_in_tab].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
                             break;
                             
                         case TAB_KILLED:
