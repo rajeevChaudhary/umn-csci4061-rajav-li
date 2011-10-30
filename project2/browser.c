@@ -58,10 +58,10 @@ void uri_entered_cb(GtkWidget* entry, gpointer data)
     
     // Create a child_req_to_parent with req set to a child_request set to a new_uri_req
 
-	req.req.uri_reg.uri = uri
+	new_req.req.uri_req.uri = uri;
    
 	    // Write that child_req_to_parent to the pipe at channel.child_to_parent_fd[WRITE]
-	write(comm_channel.child_to_parent_fd[WRITE], req, sizeof(child_req_to_parent));
+	write(channel.child_to_parent_fd[WRITE], new_req, sizeof(child_req_to_parent));
 } 
 
 
@@ -100,10 +100,10 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 
     
     // Set new_req to the appropriate tab_index (tab_index is set above for you)
-	new_req.req.new_tab_req.tab_index = tab_index
+	new_req.req.new_tab_req.tab_index = tab_index;
 	
     // Write the child_req_to_parent to the pipe at channel.child_to_parent_fd[WRITE]
-	write(comm_channel.child_to_parent_fd[WRITE], req, sizeof(child_req_to_parent));
+	write(channel.child_to_parent_fd[WRITE], new_req, sizeof(child_req_to_parent));
 }
 
 
