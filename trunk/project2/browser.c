@@ -132,6 +132,9 @@ void tab_flow(int tab_index)
     
     for (;;)
     {
+        process_single_gtk_event();
+        usleep(1);
+        
         if (read(channel[tab_index].parent_to_child_fd[READ], &req, sizeof(child_req_to_parent)) != -1)
             switch (req.type) {
                 case NEW_URI_ENTERED:
@@ -148,9 +151,6 @@ void tab_flow(int tab_index)
                     perror("tab_flow: Message ignored");
                     break;
             }
-        
-        process_single_gtk_event();
-        usleep(1);
     }
 }
 
