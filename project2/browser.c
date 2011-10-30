@@ -112,6 +112,47 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 }
 
 
+
+void controller_flow()
+{
+    browser_window* bwindow;
+    
+    create_browser(CONTROLLER_TAB, 0, (void*)&new_tab_created_cb, (void*)&uri_entered_cb, &bwindow, channel[0]);
+    show_browser();  //Blocking call; returns when CONTROLLER window is closed
+}
+
+
+void tab_flow(int tab_index)
+{
+    child_req_to_parent req;
+    browser_window* bwindow;
+    
+    create_browser(URL_RENDERING_TAB, tab_index, NULL, NULL, &bwindow, channel[tab_index]);
+    
+    for (;;)
+    {
+        if (read(channel[tab_index].parent_to_child_fd[READ], &req, sizeof(child_req_to_parent)) != -1)
+            switch (req.type) {
+                case NEW_URI_ENTERED:
+                    render_web_page_in_tab(req.req.uri_req.uri, bwindow);
+                    break;
+                    
+                case TAB_KILLED:
+                    process_all_gtk_events();
+                    return;
+                    
+                case CREATE_TAB:
+                default:
+                    perror("tab_flow: Message ignored");
+                    break;
+            }
+        
+        process_single_gtk_event();
+        usleep(1);
+    }
+}
+
+
 // Forking function -- returns PARENT, CHILD, or 0 for failure
 int fork_tab(int tab_index)
 
@@ -155,44 +196,6 @@ int fork_tab(int tab_index)
 }
 
 
-void controller_flow()
-{
-    browser_window* bwindow;
-    
-    create_browser(CONTROLLER_TAB, 0, (void*)&new_tab_created_cb, (void*)&uri_entered_cb, &bwindow, channel[0]);
-    show_browser();  //Blocking call; returns when CONTROLLER window is closed
-}
-
-
-void tab_flow(int tab_index)
-{
-    child_req_to_parent req;
-    browser_window* bwindow;
-    
-    create_browser(URL_RENDERING_TAB, tab_index, NULL, NULL, &bwindow, channel[tab_index]);
-    
-    while()
-    {
-        if (read(channel[tab_index].parent_to_child_fd[READ], &req, sizeof(child_req_to_parent)) != -1)
-            switch (req.type) {
-                case NEW_URI_ENTERED:
-                    render_web_page_in_tab(req.req.uri_req.uri, bwindow);
-                    break;
-                    
-                case TAB_KILLED:
-                    process_all_gtk_events();
-                    return;
-                    
-                case CREATE_TAB:
-                default:
-                    perror("tab_flow: Message ignored");
-                    break;
-            }
-        
-        process_single_gtk_event();
-        usleep(1);
-    }
-}
 
 
 // Forking function -- returns PARENT, CHILD, or 0 for failure
