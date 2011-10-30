@@ -233,7 +233,8 @@ int poll_children()
                             break;
                             
                         case NEW_URI_ENTERED:
-                            write(channel[i].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
+                            if (channel_alive[tab_index])
+                                write(channel[tab_index].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
                             break;
                             
                         case TAB_KILLED:
