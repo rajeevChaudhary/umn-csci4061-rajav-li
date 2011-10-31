@@ -268,10 +268,10 @@ int poll_children()
                             break;
                             
                         case TAB_KILLED:
-                            printf("Router: TAB_KILLED: %d \n", req.req.uri_req.render_in_tab);
-                            write(channel[req.req.uri_req.render_in_tab].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
-                            close(channel[req.req.uri_req.render_in_tab].child_to_parent_fd[READ]);
-                            channel_alive[req.req.uri_req.render_in_tab] = false;
+                            printf("Router: TAB_KILLED: %d \n", req.req.killed_req.tab_index);
+                            write(channel[req.req.killed_req.tab_index].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
+                            close(channel[req.req.killed_req.tab_index].child_to_parent_fd[READ]);
+                            channel_alive[req.req.killed_req.tab_index] = false;
                             break;
                             
                         default:
