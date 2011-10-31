@@ -1,7 +1,9 @@
-// Arbitrary; must be > 0
+// Arbitrary return values for forking functions below
+// Must be > 0
 #define PARENT 1
 #define CHILD 2
 
+// Convenience constants for pipe fd's
 #define READ 0
 #define WRITE 1
 
@@ -16,6 +18,8 @@
 #include <errno.h>
 
 extern int errno;
+
+// + 1 is for controller tab, which takes index 0
 comm_channel channel[UNRECLAIMED_TAB_COUNTER + 1];
 bool channel_alive[UNRECLAIMED_TAB_COUNTER + 1];
 
@@ -34,19 +38,21 @@ bool channel_alive[UNRECLAIMED_TAB_COUNTER + 1];
 
 void uri_entered_cb(GtkWidget* entry, gpointer data)
 {
-
-	
-	
 	if(!data)
 		return;
+    
 	browser_window* b_window = (browser_window*)data;
     comm_channel channel = b_window->channel;
+    
 	// Get the tab index where the URL is to be rendered
 	int tab_index = query_tab_id_for_request(entry, data);
-	if(tab_index <= 0)
+	if (tab_index < 1 || tab_index > UNRECLAIMED_TAB_COUNTER)
 	{
-		//Append code for error handling
+        char* alert_str;
+        sprintf(alert_str, "Please enter a tab index from 1 to %d", UNRECLAIMED_TAB_COUNTER);
+		alert(alert_str);
         
+        return;
 	}
     
 	// Get the URL.
