@@ -124,7 +124,7 @@ void controller_flow()
 {
     browser_window* bwindow = NULL;
     
-    create_browser(CONTROLLER_TAB, 0, (G_CALLBACK*)&new_tab_created_cb, (G_CALLBACK*)&uri_entered_cb, &bwindow, channel[0]);
+    create_browser(CONTROLLER_TAB, 0, G_CALLBACK(new_tab_created_cb), G_CALLBACK(uri_entered_cb), &bwindow, channel[0]);
     show_browser();  //Blocking call; returns when CONTROLLER window is closed
     
     //Exiting
