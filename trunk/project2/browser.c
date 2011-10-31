@@ -48,10 +48,7 @@ void uri_entered_cb(GtkWidget* entry, gpointer data)
 	int tab_index = query_tab_id_for_request(entry, data);
 	if (tab_index < 1 || tab_index > UNRECLAIMED_TAB_COUNTER)
 	{
-        char* alert_str;
-        asprintf(&alert_str, "Please enter a tab index from 1 to %d", UNRECLAIMED_TAB_COUNTER);
-		alert(alert_str);
-        free(&alert_str);
+		alert("Please enter a tab index from 1 to 10");
         
         //perror("uri_entered_cb (Invalid tab index)");
         
@@ -171,9 +168,7 @@ void tab_flow(int tab_index)
             }
         else if (errno != EAGAIN)
         {
-            char* error_str;
-            asprintf(&error_str, "Tab %d exiting (Problem reading from router pipe)", tab_index);
-            perror(error_str);
+            perror("tab_flow (Problem reading from router pipe)");
             
             process_all_gtk_events();
             exit(1);
