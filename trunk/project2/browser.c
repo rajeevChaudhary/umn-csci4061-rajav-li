@@ -1,8 +1,3 @@
-// Arbitrary return values for forking functions below
-// Must be > 0
-#define PARENT 1
-#define CHILD 2
-
 // Convenience constants for pipe fd's
 #define READ 0
 #define WRITE 1
@@ -20,8 +15,8 @@
 extern int errno;
 
 // + 1 is for controller tab, which takes index 0
-comm_channel channel[UNRECLAIMED_TAB_COUNTER + 1];
-bool channel_alive[UNRECLAIMED_TAB_COUNTER + 1];
+comm_channel channel[UNRECLAIMED_TAB_COUNTER + 1]; // Pipes
+bool channel_alive[UNRECLAIMED_TAB_COUNTER + 1]; // Whether pipes/processes are live
 
 /*
  * Name:		uri_entered_cb
@@ -48,9 +43,9 @@ void uri_entered_cb(GtkWidget* entry, gpointer data)
 	int tab_index = query_tab_id_for_request(entry, data);
 	if (tab_index < 1 || tab_index > UNRECLAIMED_TAB_COUNTER)
 	{
-		alert("Please enter a tab index from 1 to 10");
-        
-        //perror("uri_entered_cb (Invalid tab index)");
+        char alert_text[80];
+        sprintf(alert_text, "Please enter a tab index from 1 to %d", UNRECLAIMED_TAB_COUNTER);
+		alert(alert_text);
         
         return;
 	}
@@ -58,21 +53,16 @@ void uri_entered_cb(GtkWidget* entry, gpointer data)
 	// Get the URL.
 	char* uri = get_entered_uri(entry);
     child_req_to_parent new_req;
-	
-	// Prepare 'request' packet to send to router (/parent) process.
-    
-    
-    // Create a child_req_to_parent with req set to a child_request set to a new_uri_req
 
 	new_req.type = NEW_URI_ENTERED;
 
 	strncpy(new_req.req.uri_req.uri, uri, 511);
-	new_req.req.uri_req.uri[511] = '\0';
+	new_req.req.uri_req.uri[511] = '\0'; // Just in case
     
     new_req.req.uri_req.render_in_tab = tab_index;
    
-	    // Write that child_req_to_parent to the pipe at channel.child_to_parent_fd[WRITE]
-	write(channel.child_to_parent_fd[WRITE], &new_req, sizeof(child_req_to_parent));
+	if (write(channel.child_to_parent_fd[WRITE], &new_req, sizeof(child_req_to_parent)) == -1)
+        perror("[Controller] uri_entered_cb (Write message to pipe failed)");
 } 
 
 
@@ -103,39 +93,40 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
     
 	comm_channel channel = ((browser_window*)data)->channel;
     
-	// Create a new request of type CREATE_TAB
-    
     child_req_to_parent new_req;
-	//Append your code here
-
 	new_req.type = CREATE_TAB;
 	
     // Write the child_req_to_parent to the pipe at channel.child_to_parent_fd[WRITE]
-	write(channel.child_to_parent_fd[WRITE], &new_req, sizeof(child_req_to_parent));
+	if (write(channel.child_to_parent_fd[WRITE], &new_req, sizeof(child_req_to_parent)) == -1)
+        perror("[Controller] new_tab_created_cb (Write message to pipe failed)");
 }
 
 
 
+// Flow-control function for tab 0, the controller
 void controller_flow()
+
 {
     browser_window* bwindow = NULL;
     
-    printf("Starting controller\n");
+    printf("Controller: Starting\n");
     
     create_browser(CONTROLLER_TAB, 0, G_CALLBACK(new_tab_created_cb), G_CALLBACK(uri_entered_cb), &bwindow, channel[0]);
     show_browser();  //Blocking call; returns when CONTROLLER window is closed
     
     //Exiting
-    printf("Exiting controller\n");
+    printf("Controller: Exiting\n");
     process_all_gtk_events();
 
     exit(0);
 }
 
 
+// Flow-control function for tabs 1-10
 void tab_flow(int tab_index)
+
 {
-    printf("Starting tab %d \n", tab_index);
+    printf("Tab %d: Starting\n", tab_index);
     
     child_req_to_parent req;
     browser_window* bwindow = NULL;
@@ -152,12 +143,12 @@ void tab_flow(int tab_index)
         if (read_ret > 0)
             switch (req.type) {
                 case NEW_URI_ENTERED:
-                    printf("Tab %d attempting to render %s\n", tab_index, req.req.uri_req.uri);
+                    printf("Tab %d: Attempting to render %s\n", tab_index, req.req.uri_req.uri);
                     render_web_page_in_tab(req.req.uri_req.uri, bwindow);
                     break;
                     
                 case TAB_KILLED:
-                    printf("Exiting tab %d \n", tab_index);
+                    printf("Tab %d: Exiting\n", tab_index);
                     process_all_gtk_events();
                     exit(0);
                     
@@ -168,7 +159,7 @@ void tab_flow(int tab_index)
             }
         else if (errno != EAGAIN)
         {
-            perror("tab_flow (Problem reading from router pipe)");
+            perror("tab_flow unrecoverable (Problem reading from router pipe)");
             
             process_all_gtk_events();
             exit(1);
@@ -179,48 +170,44 @@ void tab_flow(int tab_index)
 }
 
 
-// Forking function -- returns PARENT, CHILD, or 0 for failure
-int fork_tab(int tab_index)
+// Forking function -- returns in the parent, never returns in the child (enters flow function)
+void fork_tab(int tab_index)
 
 {
     if (pipe(channel[tab_index].parent_to_child_fd) == -1 ||
-        pipe(channel[tab_index].child_to_parent_fd) == -1)
-    {
-        perror("fork_tab: Failed to create one or both pipes");
-        return 0;
-    }
+            pipe(channel[tab_index].child_to_parent_fd) == -1)
+        perror("fork_tab unrecoverable (Failed to create one or both pipes)");
     else
-    {
-        channel_alive[tab_index] = true;
-        
         switch ( fork() )
         {
             case -1:
-                perror("fork_tab: Failed to fork");
-                return 0;
+                perror("fork_tab unrecoverable (Failed to fork)");
+                return;
                 
-            case 0:     //@ Parent code (ROUTER)
+            case 0:     // Parent code (ROUTER)
+                channel_alive[tab_index] = true;
+                
                 close(channel[tab_index].parent_to_child_fd[READ]);
                 close(channel[tab_index].child_to_parent_fd[WRITE]);
                                 
                 fcntl(channel[tab_index].child_to_parent_fd[READ], F_SETFL, O_NONBLOCK);
                 
-                return PARENT;
+                return;
                 
-            default:    //@ Child code (a tab; CONTROLLER or URL_RENDERING_TAB)
+            default:    // Child code (a tab; CONTROLLER or URL_RENDERING_TAB)
                 close(channel[tab_index].child_to_parent_fd[READ]);
                 close(channel[tab_index].parent_to_child_fd[WRITE]);
                 
                 fcntl(channel[tab_index].parent_to_child_fd[READ], F_SETFL, O_NONBLOCK);
                 
                 if (tab_index == 0)
-                    controller_flow();
+                    controller_flow(); //flow-control function; does not return, calls exit() when done
                 else
-                    tab_flow(tab_index);
+                    tab_flow(tab_index); //flow-control function; does not return, calls exit() when done
                 
-                return CHILD;
+                // This point should never be reached
+                exit(2);
         }
-    }
 }
 
 
@@ -232,8 +219,12 @@ int poll_children()
 {
     int i;
 
+    // Initialize global bool array channel_alive,
+    // sister array to channel[] to keep track
+    // of child process and pipe status
     for (i = 1; i < UNRECLAIMED_TAB_COUNTER + 1; i++)
         channel_alive[i] = false;
+    
     
     // Loop through child_pipes and read for new messages to pass on
     // Fork new tab if necessary and return CHILD
@@ -259,12 +250,16 @@ int poll_children()
                                 fork_tab(current_new_tab_index); // This function will set channel_alive[i]
                                 current_new_tab_index++;
                             }
+                            else
+                                printf("There are already %d tabs!", UNRECLAIMED_TAB_COUNTER);
                             break;
                             
                         case NEW_URI_ENTERED:
                             printf("Router: NEW_URI_ENTERED: %d \n", req.req.uri_req.render_in_tab);
                             if (channel_alive[req.req.uri_req.render_in_tab])
                                 write(channel[req.req.uri_req.render_in_tab].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
+                            else
+                                printf("Tab %d does not exist!\n", req.req.uri_req.render_in_tab);
                             break;
                             
                         case TAB_KILLED:
@@ -275,6 +270,8 @@ int poll_children()
                             
                             if (req.req.killed_req.tab_index == 0)
                             {
+                                printf("Router: Controller killed - Killing all rendering tabs.\n");
+                                
                                 for (i = 1; i < UNRECLAIMED_TAB_COUNTER + 1; i++)
                                 {
                                     if (channel_alive[i])
@@ -292,6 +289,7 @@ int poll_children()
                             break;
                             
                         default:
+                            perror("poll_children (Read a message of invalid type)");
                             break;
                     }
             }
@@ -307,25 +305,13 @@ int poll_children()
 int main()
 
 {
-    /* //@ marks fork points */
+    assert(UNRECLAIMED_TAB_COUNTER > 1); // Sanity check
     
-	//@ ALL
-
-    switch ( fork_tab(0) )
-    {
-        case PARENT:    //@ ROUTER
-            poll_children();
-            break;
-            
-        case CHILD:     //@ CONTROLLER
-            // At this point a child process is done and exiting, so do nothing
-            break;
-            
-        case 0:
-        default:
-            // Exit if failed
-            perror("main: Call to fork_controller() failed");
-            return 1;
-    }
+    fork_tab(0); // Fork controller
+    poll_children(); // Enter polling loop -- blocks until all tabs and controller are killed
+    
+    
+    //Exiting
+    return 0;
 }
 
