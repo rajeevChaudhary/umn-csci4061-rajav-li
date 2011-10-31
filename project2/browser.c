@@ -1,5 +1,11 @@
-// CSci 4061 Fall '11, Project 2
-// Jonathan Rajavuori, Ou Li
+/* CSci4061 F2011 Assignment 2
+ * section: 3
+ * section: 4
+ * date: 10/31/11
+ * name: Jonathan Rajavuori, Ou Li
+ * id: 3438942, 4358557 */
+
+/** Tested on Linux machines in Keller 2-170 **/
 
 #include "wrapper.h"
 #include <sys/types.h>
