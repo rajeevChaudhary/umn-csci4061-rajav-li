@@ -1,6 +1,5 @@
-// Convenience constants for pipe fd's
-#define READ 0
-#define WRITE 1
+// CSci 4061 Fall '11, Project 2
+// Jonathan Rajavuori, Ou Li
 
 #include "wrapper.h"
 #include <sys/types.h>
@@ -14,9 +13,27 @@
 
 extern int errno;
 
+
+
+// Convenience constants for pipe fd's
+#define READ 0
+#define WRITE 1
+
+
+// The two global variables below are only used in the ROUTER process
+
 // + 1 is for controller tab, which takes index 0
 comm_channel channel[UNRECLAIMED_TAB_COUNTER + 1]; // Pipes
 bool channel_alive[UNRECLAIMED_TAB_COUNTER + 1]; // Whether pipes/processes are live
+
+
+
+
+
+
+// The following two functions are callbacks registered with the UI
+// in the CONTROLLER process.
+
 
 /*
  * Name:		uri_entered_cb
@@ -67,10 +84,6 @@ void uri_entered_cb(GtkWidget* entry, gpointer data)
 
 
 
-
-
-
-
 /*
  
  * Name:		new_tab_created_cb
@@ -103,8 +116,13 @@ void new_tab_created_cb(GtkButton *button, gpointer data)
 
 
 
+
+
 // Flow-control function for tab 0, the controller
 void controller_flow()
+
+// NOTES:
+// This function never returns, instead calling exit() at all termination points
 
 {
     browser_window* bwindow = NULL;
@@ -124,6 +142,9 @@ void controller_flow()
 
 // Flow-control function for tabs 1-10
 void tab_flow(int tab_index)
+
+// NOTES:
+// This function never returns, instead calling exit() at all termination points
 
 {
     printf("Tab %d: Starting\n", tab_index);
@@ -170,8 +191,15 @@ void tab_flow(int tab_index)
 }
 
 
-// Forking function -- returns in the parent, never returns in the child (enters flow function)
+
+// This function is intended to replace a direct call to fork(),
+// handling the pipe initialization and re-routing child flow.
+// It is also called for starting CONTROLLER, with index 0.
+
 void fork_tab(int tab_index)
+
+// NOTES:
+// Forking function -- returns in the parent, never returns in the child (enters flow function)
 
 {
     if (pipe(channel[tab_index].parent_to_child_fd) == -1 ||
@@ -212,8 +240,15 @@ void fork_tab(int tab_index)
 
 
 
-// Forking function -- returns in the parent, never returns in the child (enters flow function through fork_tab())
+// This function only runs in the ROUTER process, and it comprises most of its flow.
+// The purpose of this function is to continually poll all of the pipes in the
+// channel[] array for new messages from CONTROLLER or a URL_RENDERING_TAB.
+// It returns when all of the channels are dead.
+
 void poll_children()
+
+// NOTES:
+// Forking function -- returns in the parent, never returns in the child (enters flow function through fork_tab())
 
 {
     int i;
@@ -226,20 +261,23 @@ void poll_children()
     
     
     // Loop through child_pipes and read for new messages to pass on
-    // Fork new tab if necessar
+    // Fork new tab if necessary
     child_req_to_parent req;
-    bool at_least_one_alive;
+    bool at_least_one_alive; // Loop exit condition
     int current_new_tab_index = 1;
     
     do
     {
-        at_least_one_alive = false;
+        at_least_one_alive = false; // We want to exit!
         
         for (i = 0; i < UNRECLAIMED_TAB_COUNTER + 1; i++)
         {
+            // Note that this checks the CONTROLLER pipe, too.
+            // However, if CONTROLLER dies, we kill everything
             if (channel_alive[i])
             {
-                at_least_one_alive = true;
+                at_least_one_alive = true; // ... but not just yet, we still have children
+                
                 if (read(channel[i].child_to_parent_fd[READ], &req, sizeof(child_req_to_parent)) != -1)
                     switch (req.type) {
                         case CREATE_TAB:
@@ -250,7 +288,7 @@ void poll_children()
                                 current_new_tab_index++;
                             }
                             else
-                                printf("There are already %d tabs!", UNRECLAIMED_TAB_COUNTER);
+                                printf("There are already %d tabs!\n", UNRECLAIMED_TAB_COUNTER);
                             break;
                             
                         case NEW_URI_ENTERED:
@@ -267,6 +305,8 @@ void poll_children()
                             close(channel[req.req.killed_req.tab_index].child_to_parent_fd[READ]);
                             channel_alive[req.req.killed_req.tab_index] = false;
                             
+                            // If CONTROLLER is dying, kill everything.
+                            // (This isn't strictly necessary, but it's the behavior of the solution binary provided)
                             if (req.req.killed_req.tab_index == 0)
                             {
                                 printf("Router: Controller killed - Killing all rendering tabs.\n");
@@ -275,14 +315,21 @@ void poll_children()
                                 {
                                     if (channel_alive[i])
                                     {
+                                        // Recycles the kill request
+                                        
+                                        // We don't actually have to set the index, since the child ignores it,
+                                        // but it might cause problems later on if it's changed to not ignore.
                                         req.req.killed_req.tab_index = i;
                                         
-                                        printf("Router: Killing tab: %d \n", req.req.killed_req.tab_index);
-                                        write(channel[req.req.killed_req.tab_index].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
-                                        close(channel[req.req.killed_req.tab_index].child_to_parent_fd[READ]);
-                                        channel_alive[req.req.killed_req.tab_index] = false;
+                                        printf("Router: Killing tab: %d \n", i);
+                                        write(channel[i].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
+                                        close(channel[i].child_to_parent_fd[READ]);
+                                        channel_alive[i] = false;
+                                        
                                     }
                                 }
+                                
+                                return;
                             }
                             
                             break;
