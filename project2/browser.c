@@ -277,6 +277,23 @@ int poll_children()
                             write(channel[req.req.killed_req.tab_index].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
                             close(channel[req.req.killed_req.tab_index].child_to_parent_fd[READ]);
                             channel_alive[req.req.killed_req.tab_index] = false;
+                            
+                            if (req.req.killed_req.tab_index == 0)
+                            {
+                                for (i = 1; i < UNRECLAIMED_TAB_COUNTER + 1; i++)
+                                {
+                                    if (channel_alive[i])
+                                    {
+                                        req.req.killed_req.tab_index = i;
+                                        
+                                        printf("Router: Killing tab: %d \n", req.req.killed_req.tab_index);
+                                        write(channel[req.req.killed_req.tab_index].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
+                                        close(channel[req.req.killed_req.tab_index].child_to_parent_fd[READ]);
+                                        channel_alive[req.req.killed_req.tab_index] = false;
+                                    }
+                                }
+                            }
+                            
                             break;
                             
                         default:
