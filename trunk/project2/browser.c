@@ -48,13 +48,12 @@ void uri_entered_cb(GtkWidget* entry, gpointer data)
 	int tab_index = query_tab_id_for_request(entry, data);
 	if (tab_index < 1 || tab_index > UNRECLAIMED_TAB_COUNTER)
 	{
-        /*
         char* alert_str;
-        sprintf(alert_str, "Please enter a tab index from 1 to %d", UNRECLAIMED_TAB_COUNTER);
+        asprintf(&alert_str, "Please enter a tab index from 1 to %d", UNRECLAIMED_TAB_COUNTER);
 		alert(alert_str);
-         */
+        free(&alert_str);
         
-        perror("uri_entered_cb: Invalid tab index");
+        //perror("uri_entered_cb (Invalid tab index)");
         
         return;
 	}
@@ -124,6 +123,8 @@ void controller_flow()
 {
     browser_window* bwindow = NULL;
     
+    printf("Starting controller\n");
+    
     create_browser(CONTROLLER_TAB, 0, G_CALLBACK(new_tab_created_cb), G_CALLBACK(uri_entered_cb), &bwindow, channel[0]);
     show_browser();  //Blocking call; returns when CONTROLLER window is closed
     
@@ -154,7 +155,7 @@ void tab_flow(int tab_index)
         if (read_ret > 0)
             switch (req.type) {
                 case NEW_URI_ENTERED:
-                    printf("New uri\n");
+                    printf("Tab %d attempting to render %s\n", tab_index, req.req.uri_req.uri);
                     render_web_page_in_tab(req.req.uri_req.uri, bwindow);
                     break;
                     
@@ -165,18 +166,21 @@ void tab_flow(int tab_index)
                     
                 case CREATE_TAB:
                 default:
-                    perror("tab_flow (Message ignored)");
+                    perror("tab_flow (Invalid message from pipe)");
                     break;
             }
         else if (errno != EAGAIN)
         {
-            printf("Tab die\n");
+            char* error_str;
+            asprintf(&error_str, "Tab %d exiting (Problem reading from router pipe)", tab_index);
+            perror(error_str);
+            
             process_all_gtk_events();
-            return;
+            exit(1);
         }
     }
     
-    printf("SHOULD NOT SEE\n");
+    // Will not reach this point; infinite loop with internal exit conditions
 }
 
 
