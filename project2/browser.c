@@ -147,7 +147,9 @@ void tab_flow(int tab_index)
         process_single_gtk_event();
         usleep(1);
         
-        if (read(channel[tab_index].parent_to_child_fd[READ], &req, sizeof(child_req_to_parent)) > 0)
+        int read_ret = read(channel[tab_index].parent_to_child_fd[READ], &req, sizeof(child_req_to_parent));
+        
+        if (read_ret > 0)
             switch (req.type) {
                 case NEW_URI_ENTERED:
                     printf("New uri\n");
@@ -165,6 +167,13 @@ void tab_flow(int tab_index)
                     perror("tab_flow: Message ignored");
                     break;
             }
+        else if (read_ret == 0)
+        {
+            printf("EOF");
+            
+            process_all_gtk_events();
+            return;
+        }
     }
     
     printf("SHOULD NOT SEE");
