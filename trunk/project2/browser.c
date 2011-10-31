@@ -130,6 +130,8 @@ void controller_flow()
     //Exiting
     printf("Exiting controller\n");
     process_all_gtk_events();
+
+    exit(0);
 }
 
 
@@ -159,12 +161,11 @@ void tab_flow(int tab_index)
                 case TAB_KILLED:
                     printf("Exiting tab %d \n", tab_index);
                     process_all_gtk_events();
-                    printf("Exiting tab %d, post \n", tab_index);
-                    return;
+                    exit(0);
                     
                 case CREATE_TAB:
                 default:
-                    perror("tab_flow: Message ignored");
+                    perror("tab_flow (Message ignored)");
                     break;
             }
         else if (errno != EAGAIN)
@@ -310,7 +311,5 @@ int main()
             perror("main: Call to fork_controller() failed");
             return 1;
     }
-
-	return 0;
 }
 
