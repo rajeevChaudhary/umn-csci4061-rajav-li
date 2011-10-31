@@ -128,12 +128,15 @@ void controller_flow()
     show_browser();  //Blocking call; returns when CONTROLLER window is closed
     
     //Exiting
+    printf("Exiting controller");
     process_all_gtk_events();
 }
 
 
 void tab_flow(int tab_index)
 {
+    printf("Starting tab %d", tab_index);
+    
     child_req_to_parent req;
     browser_window* bwindow = NULL;
     
@@ -144,7 +147,7 @@ void tab_flow(int tab_index)
         process_single_gtk_event();
         usleep(1);
         
-        if (read(channel[tab_index].parent_to_child_fd[READ], &req, sizeof(child_req_to_parent)) != -1)
+        if (read(channel[tab_index].parent_to_child_fd[READ], &req, sizeof(child_req_to_parent)) > 0)
             switch (req.type) {
                 case NEW_URI_ENTERED:
                     printf("New uri\n");
@@ -152,7 +155,9 @@ void tab_flow(int tab_index)
                     break;
                     
                 case TAB_KILLED:
+                    printf("Exiting tab %d", tab_index);
                     process_all_gtk_events();
+                    printf("Exiting tab %d, post", tab_index);
                     return;
                     
                 case CREATE_TAB:
@@ -161,6 +166,8 @@ void tab_flow(int tab_index)
                     break;
             }
     }
+    
+    printf("SHOULD NOT SEE");
 }
 
 
@@ -238,6 +245,7 @@ int poll_children()
                 if (read(channel[i].child_to_parent_fd[READ], &req, sizeof(child_req_to_parent)) != -1)
                     switch (req.type) {
                         case CREATE_TAB:
+                            printf("Router: CREATE_TAB");
                             if (current_new_tab_index <= UNRECLAIMED_TAB_COUNTER)
                             {
                                 fork_tab(current_new_tab_index); // This function will set channel_alive[i]
@@ -246,11 +254,13 @@ int poll_children()
                             break;
                             
                         case NEW_URI_ENTERED:
+                            printf("Router: NEW_URI_ENTERED");
                             if (channel_alive[req.req.uri_req.render_in_tab])
                                 write(channel[req.req.uri_req.render_in_tab].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
                             break;
                             
                         case TAB_KILLED:
+                            printf("Router: TAB_KILLED");
                             write(channel[req.req.uri_req.render_in_tab].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
                             close(channel[i].child_to_parent_fd[READ]);
                             channel_alive[i] = false;
