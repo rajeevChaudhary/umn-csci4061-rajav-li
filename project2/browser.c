@@ -48,9 +48,13 @@ void uri_entered_cb(GtkWidget* entry, gpointer data)
 	int tab_index = query_tab_id_for_request(entry, data);
 	if (tab_index < 1 || tab_index > UNRECLAIMED_TAB_COUNTER)
 	{
+        /*
         char* alert_str;
         sprintf(alert_str, "Please enter a tab index from 1 to %d", UNRECLAIMED_TAB_COUNTER);
 		alert(alert_str);
+         */
+        
+        perror("uri_entered_cb: Invalid tab index");
         
         return;
 	}
