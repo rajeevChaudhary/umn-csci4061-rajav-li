@@ -124,8 +124,11 @@ void controller_flow()
 {
     browser_window* bwindow = NULL;
     
-    create_browser(CONTROLLER_TAB, 0, (void*)&new_tab_created_cb, (void*)&uri_entered_cb, &bwindow, channel[0]);
+    create_browser(CONTROLLER_TAB, 0, (G_CALLBACK*)&new_tab_created_cb, (G_CALLBACK*)&uri_entered_cb, &bwindow, channel[0]);
     show_browser();  //Blocking call; returns when CONTROLLER window is closed
+    
+    //Exiting
+    process_all_gtk_events();
 }
 
 
@@ -134,11 +137,7 @@ void tab_flow(int tab_index)
     child_req_to_parent req;
     browser_window* bwindow = NULL;
     
-    printf("Before\n");
-    
-    create_browser(URL_RENDERING_TAB, tab_index, (void*)&new_tab_created_cb, (void*)&uri_entered_cb, &bwindow, channel[tab_index]);
-    
-    printf("Got past\n");
+    create_browser(URL_RENDERING_TAB, tab_index, NULL, NULL, &bwindow, channel[tab_index]);
     
     for (;;)
     {
@@ -241,7 +240,7 @@ int poll_children()
                         case CREATE_TAB:
                             if (current_new_tab_index <= UNRECLAIMED_TAB_COUNTER)
                             {
-                                fork_tab(current_new_tab_index);
+                                fork_tab(current_new_tab_index); // This function will set channel_alive[i]
                                 current_new_tab_index++;
                             }
                             break;
@@ -252,6 +251,7 @@ int poll_children()
                             break;
                             
                         case TAB_KILLED:
+                            write(channel[req.req.uri_req.render_in_tab].parent_to_child_fd[WRITE], &req, sizeof(child_req_to_parent));
                             close(channel[i].child_to_parent_fd[READ]);
                             channel_alive[i] = false;
                             break;
