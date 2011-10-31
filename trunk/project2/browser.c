@@ -167,10 +167,9 @@ void tab_flow(int tab_index)
                     perror("tab_flow: Message ignored");
                     break;
             }
-        else if (read_ret == 0)
+        else if (errno != EAGAIN)
         {
-            printf("EOF");
-            
+            printf("Tab die\n");
             process_all_gtk_events();
             return;
         }
@@ -208,7 +207,7 @@ int fork_tab(int tab_index)
                 
                 return PARENT;
                 
-            default:    //@ Child code (CONTROLLER)
+            default:    //@ Child code (a tab; CONTROLLER or URL_RENDERING_TAB)
                 close(channel[tab_index].child_to_parent_fd[READ]);
                 close(channel[tab_index].parent_to_child_fd[WRITE]);
                 
