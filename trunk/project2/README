@@ -1,0 +1,43 @@
+/* CSci4061 F2011 Assignment 2
+ * login: rajav003
+ * Linux
+ * date: 10/31/11
+ * name: Jonathan Rajavuori, Ou Li
+ * id: 3438942, 4358557 */
+
+
+=== browser ===
+
+
+PURPOSE
+
+To provide a simple multi-process web browser based on the webkit rendering engine.
+
+
+HOW TO COMPILE
+
+Requires webkit and gtk.
+
+In the source directory, run `make` to compile. This produces the binary 'browser' in the same directory.
+
+
+HOW TO USE
+
+Run the 'browser' binary.
+
+
+PROGRAM FUNCTIONALITY
+
+This browser starts with a main window that accepts two fields of input, a URL and a tab number. There is also a plus (+) button for creating a new browser window, up to a maximum of 10. Each new window created will be explicitly numbered, and once a certain tab number has been created, another one of the same number cannot be created, even if the old one is killed. A URL can only be sent to a tab that already exists. The main window cannot render URLs itself.
+
+
+ASSUMPTIONS
+
+This program assumes that the maximum number of tabs specified in the code is sane; that is, no memory management is performed for huge numbers of tabs. It also assumes that the user wishes to exit upon closing the main window, and proceeds to kill all remaining tabs.
+
+
+ERRORS
+
+If an invalid tab index is entered by the user, an alert is shown and no further action taken.
+
+Otherwise, descriptive messages are output to stdout for invalid user input, and to stderr for another execution error that should not occur under normal conditions.
