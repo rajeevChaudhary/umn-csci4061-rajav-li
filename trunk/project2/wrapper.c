@@ -1,3 +1,5 @@
+/** See browser.c for comments **/
+
 #include "wrapper.h"
 #include <string.h>
 #include <stdlib.h>
