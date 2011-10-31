@@ -212,9 +212,8 @@ void fork_tab(int tab_index)
 
 
 
-
-// Forking function -- returns PARENT, CHILD, or 0 for failure
-int poll_children()
+// Forking function -- returns in the parent, never returns in the child (enters flow function through fork_tab())
+void poll_children()
 
 {
     int i;
@@ -227,7 +226,7 @@ int poll_children()
     
     
     // Loop through child_pipes and read for new messages to pass on
-    // Fork new tab if necessary and return CHILD
+    // Fork new tab if necessar
     child_req_to_parent req;
     bool at_least_one_alive;
     int current_new_tab_index = 1;
@@ -297,15 +296,19 @@ int poll_children()
         
         usleep(1);
     } while (at_least_one_alive);
-
-    return PARENT;
+    
+    return;
 }
 
 
 int main()
 
 {
-    assert(UNRECLAIMED_TAB_COUNTER > 1); // Sanity check
+    if (UNRECLAIMED_TAB_COUNTER <= 1) // Sanity check
+    {
+        perror("UNRECLAIMED_TAB_COUNTER too low");
+        return 1;
+    }
     
     fork_tab(0); // Fork controller
     poll_children(); // Enter polling loop -- blocks until all tabs and controller are killed
