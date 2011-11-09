@@ -9,19 +9,22 @@
 #define SZ 64
 #define how 8
 
-typedef struct{
-  void* address;
-  int size;
-  int flag; //We used flag to indicate whether a chunk is free or not. You can however ignore that and use another solution.
-} node;
+struct node {
+    void* address;
+    int size;
+    bool isFree;
+    
+    node * next;
+    node * prev;
+};
 
-typedef struct {
-  void *stuff;
-  node *free_list;
-  int tsz; 
-  int partitions;
-  int max_avail_size; 
-} mm_t;
+struct mm_t {
+  void *start;
+  node *chunk_list;
+  int total_size; 
+  //int partitions;
+  int num_free_bytes; 
+};
 
 
 int  mm_init (mm_t *MM, int tsz);
