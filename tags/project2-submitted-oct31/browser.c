@@ -218,7 +218,7 @@ void fork_tab(int tab_index)
                 perror("fork_tab unrecoverable (Failed to fork)");
                 return;
                 
-            case 0:     // Parent code (ROUTER)
+            case 0:     // Parent cqode (ROUTER)
                 channel_alive[tab_index] = true;
                 
                 close(channel[tab_index].parent_to_child_fd[READ]);
