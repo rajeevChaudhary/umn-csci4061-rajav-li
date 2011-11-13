@@ -2,7 +2,7 @@
 
 #define MaxPackets 10
 
-typedef char data_t[8];
+typedef char data_t[9];
 
 struct packet_t {
   int how_many; /* number of packets in the message */

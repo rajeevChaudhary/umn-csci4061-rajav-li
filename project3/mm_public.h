@@ -27,7 +27,7 @@ struct mm_t {
 };
 
 
-int  mm_init (mm_t *MM, int tsz);
+int  mm_init (mm_t *MM, int total_size);
 void* mm_get (mm_t *MM, int neededSize);
 void mm_put (mm_t *MM, void *chunk);
 void  mm_release (mm_t *MM);

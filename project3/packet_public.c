@@ -41,15 +41,30 @@ void packet_handler(int sig)
     fprintf (stderr, "IN PACKET HANDLER, sig=%d\n", sig);
     pkt = get_packet(cnt_msg); //the messages are of variable length. So, the 1st message consists of 1 packet, the 2nd message consists of 2 packets and so on..
     if(pkt_cnt==0){ //when the 1st packet arrives, the size of the whole message is allocated.
+        message.num_packets = cnt_msg;
         
+        for (int i=0; i < cnt_msg; i++)
+            message.data[i]= mm_get(&MM, sizeof(data_t));
     } 
     
     pkt_total = pkt.how_many;
     printf("CURRENT MESSAGE %d\n",cnt_msg);
     
     /* insert your code here ... stick packet in memory */
+    printf("Which packet: %d\n",pkt.which);
+    strcpy( (char*) message.data[pkt.which], (const char*) pkt.data);
+    pkt_cnt++;
+    
     /*Print the packets in the correct order.*/
-    /*Deallocate message*/
+    if (pkt_cnt == pkt_total)
+    {
+        printf("Message %d:\n", cnt_msg);
+        for (int i = 0; i < pkt_total; i++)
+        {
+            printf("Packet %d: %s\n", i, (char*) message.data[i]);
+            mm_put(&MM, message.data[i]);
+        }
+    }
     
 }
 
