@@ -52,6 +52,7 @@ void packet_handler(int sig)
     
     /* insert your code here ... stick packet in memory */
     printf("Which packet: %d\n",pkt.which);
+    message.numReceivedOfPacket[pkt.which]++;
     strcpy( (char*) message.data[pkt.which], (const char*) pkt.data);
     pkt_cnt++;
     
@@ -61,7 +62,8 @@ void packet_handler(int sig)
         printf("Message %d:\n", cnt_msg);
         for (int i = 0; i < pkt_total; i++)
         {
-            printf("Packet %d: %s\n", i, (char*) message.data[i]);
+            for (int j = 0; j < message.numReceivedOfPacket[i]; j++)
+                printf("%s\n", (char*) message.data[i]);
             mm_put(&MM, message.data[i]);
         }
     }
@@ -71,7 +73,12 @@ void packet_handler(int sig)
 
 int main (int argc, char **argv)
 {          
-  
+    
+    message.num_packets = 0;
+    for (int i = 0; i < MaxPackets; i++)
+        message.numReceivedOfPacket[i] = 0;
+    mm_init (&MM, 200);	
+    
   /* set up alarm handler -- mask all signals within it */
     struct sigaction newact;
     newact.sa_handler = packet_handler;
@@ -91,8 +98,6 @@ int main (int argc, char **argv)
     interval.it_interval.tv_usec = INTERVAL_USEC;
     setitimer(ITIMER_REAL, &interval, NULL);
     
-    message.num_packets = 0;
-    mm_init (&MM, 200);	
     for (int j=1; j<=NumMessages; j++) {
         while (pkt_cnt < pkt_total) 
             pause();
@@ -102,6 +107,8 @@ int main (int argc, char **argv)
         pkt_total = 1;
         pkt_cnt = 0;
         message.num_packets = 0;
+        for (int i = 0; i < MaxPackets; i++)
+            message.numReceivedOfPacket[i] = 0;
         
         
         cnt_msg++;
