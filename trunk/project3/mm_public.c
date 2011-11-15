@@ -26,7 +26,7 @@ int  mm_init (mm_t *MM, int total_size){
     // Initialize node list with one node containing the entire space
     MM->chunk_list = (node*) malloc( sizeof(node) );
     MM->chunk_list->address = MM->start;
-    MM->chunk_list->size = MM->total_size;
+    MM->chunk_list->size = total_size;
     MM->chunk_list->isFree = true;
     MM->chunk_list->next = MM->chunk_list->prev = NULL;
     
