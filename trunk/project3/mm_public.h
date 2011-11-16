@@ -20,7 +20,8 @@
 // times the space of the biggest malloc in main_malloc.
 // The comparison is thus a little unfair. In a real application,
 // you would understand that you're trading the init and
-// release time in for faster asymptotic running time.
+// release time (and the extra space for the catalog) in
+// for a faster asymptotic running time.
 #define how 1500
 
 

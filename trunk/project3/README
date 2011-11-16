@@ -1,0 +1,18 @@
+/* CSci4061 F2011 Assignment 3
+ * section: 3
+ * login: rajav003
+ * date: 11/16/11
+ * name: Jonathan Rajavuori, Ou Li
+ * id: 3438942, 4358557 */
+
+To compile, type 'make' in the source directory. main_mm.c and main_malloc.c are required to be in the source directory.
+
+To use the program from the shell, type './binary_name' in the source directory after compiling, where binary_name is one of:
+	packet_public
+	main_mm
+	main_malloc
+
+This program demonstrates the memory manager we have implemented in mm_public, both by direct timing and by using a simple packet-receiving model. Details of the memory manager can be found in mm_public.c
+
+
+(Project developed jointly; could not say specifically who did what as we worked together)
