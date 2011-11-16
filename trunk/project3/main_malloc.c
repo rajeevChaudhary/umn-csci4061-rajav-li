@@ -13,12 +13,12 @@ int main (int argc, char **argv)
   struct itimerval oldinterval;
 
 
-  j = gettimeofday (&times, (void *)NULL);
+  j = gettimeofday (&times, NULL);
   for (i=0; i<how; i++) {
     b = (void*)malloc (i+1);
     free (b);
 }
-  j = gettimeofday (&timee, (void *)NULL);
+  j = gettimeofday (&timee, NULL);
   fprintf (stderr, "MALLOC/FREE time took %f msec\n",
           comp_time (times, timee)/1000.0);
 

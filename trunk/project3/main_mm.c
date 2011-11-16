@@ -7,7 +7,7 @@ int main (int argc, char **argv)
  void *chunk = NULL;
   mm_t MM;
 
-  j = gettimeofday (&times, (void *)NULL);
+  j = gettimeofday (&times, NULL);
   // I modified the mm_init call to be scalable
   if (mm_init(&MM, how + 1) < 0)
     perror("mm_init");
@@ -16,6 +16,6 @@ for (i=0; i< how; i++) {
     mm_put(&MM,chunk);
 }
 mm_release(&MM);
-j = gettimeofday (&timee, (void *)NULL);
+j = gettimeofday (&timee, NULL);
 fprintf (stderr, "MM time took %f msec\n",comp_time (times, timee)/1000.0);
 }
