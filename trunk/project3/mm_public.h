@@ -7,23 +7,13 @@
 #define INTERVAL 0
 #define INTERVAL_USEC 800000
 #define SZ 64
-#define how 8
+#define how 1500
 
-struct node {
-    void* address;
-    int size;
-    bool isFree;
-    
-    node * next;
-    node * prev;
-};
 
 struct mm_t {
-  void *start;
-  node *chunk_list;
-  int total_size; 
-  //int partitions;
-  int num_free_bytes; 
+    void *start;
+    int *catalog;
+    int size;
 };
 
 

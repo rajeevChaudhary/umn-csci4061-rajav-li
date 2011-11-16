@@ -44,7 +44,8 @@ void packet_handler(int sig)
         message.num_packets = cnt_msg;
         
         for (int i=0; i < cnt_msg; i++)
-            message.data[i]= mm_get(&MM, sizeof(data_t));
+            if ((message.data[i] = mm_get(&MM, sizeof(data_t))) == NULL)
+                printf("ERROR! mm_get failed\n");
     } 
     
     pkt_total = pkt.how_many;
@@ -68,6 +69,7 @@ void packet_handler(int sig)
         }
     }
     
+    return;
 }
 
 
@@ -77,7 +79,8 @@ int main (int argc, char **argv)
     message.num_packets = 0;
     for (int i = 0; i < MaxPackets; i++)
         message.numReceivedOfPacket[i] = 0;
-    mm_init (&MM, 200);	
+    if (mm_init (&MM, 200) == -1)
+        printf("ERROR! mm_init failed\n");	
     
   /* set up alarm handler -- mask all signals within it */
     struct sigaction newact;
@@ -110,9 +113,7 @@ int main (int argc, char **argv)
         for (int i = 0; i < MaxPackets; i++)
             message.numReceivedOfPacket[i] = 0;
         
-        
-        cnt_msg++;
-        
+        cnt_msg++;        
     }
     mm_release(&MM);
 }
