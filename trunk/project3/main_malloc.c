@@ -4,15 +4,19 @@ int main (int argc, char **argv)
 {
   int j, i;
   struct timeval times, timee;
-  void *b[55];
+  // I don't understand why this pointer had to be an array.
+  // As an array it enforces a needless hard limit.
+  // I made it a single void pointer instead and modified
+  // the for loop below to match.
+  void *b;
   struct itimerval interval;
   struct itimerval oldinterval;
 
 
   j = gettimeofday (&times, (void *)NULL);
   for (i=0; i<how; i++) {
-    b[i] = (void*)malloc (i+1);
-    free (b[i]);
+    b = (void*)malloc (i+1);
+    free (b);
 }
   j = gettimeofday (&timee, (void *)NULL);
   fprintf (stderr, "MALLOC/FREE time took %f msec\n",
