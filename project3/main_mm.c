@@ -8,7 +8,8 @@ int main (int argc, char **argv)
   mm_t MM;
 
   j = gettimeofday (&times, (void *)NULL);
-  if (mm_init(&MM, 55) < 0)
+  // I modified the mm_init call to be scalable
+  if (mm_init(&MM, how + 1) < 0)
     perror("mm_init");
 for (i=0; i< how; i++) { 
     chunk = mm_get(&MM, i+1);
