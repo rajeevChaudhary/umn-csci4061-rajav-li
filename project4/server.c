@@ -32,11 +32,83 @@ struct request {
 };
 
 struct cache_entry {
-    struct request* req;
+    char filename[FILENAME_SIZE];
     char* data;
 
     struct cache_entry* next;
 };
+
+
+
+
+
+// START CACHE CODE
+
+struct cache_entry* cache_head = NULL;
+struct cache_entry* cache_tail = NULL;
+unsigned current_cache_size = 0;
+int max_cache_size; // Set by user, will not exceed MAX_CACHE_SIZE
+
+pthread_mutex_t cache_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+void cache_addEntry(const char* const filename, const char* const data) {
+
+	struct cache_entry* newEntry = malloc( sizeof(struct cache_entry) );
+
+    strncpy(newEntry->filename, filename, FILENAME_SIZE);
+    newEntry->data = data;
+    newEntry->next = NULL;
+
+	pthread_mutex_lock(&cache_mutex);
+
+	if (cache_head == NULL) { // Cache is empty
+
+		cache_head = cache_tail = newEntry;
+
+	} else if (current_cache_size == max_cache_size) { // Cache is full
+
+        //Replace the oldest entry in the cache with the new entry
+
+        struct cache_entry old_head = cache_head;
+        cache_head = cache_head->next;
+        free(old_head);
+
+        if (max_cache_size == 1) { // In this case, cache_tail == cache_head, which we just freed
+            cache_head = cache_tail = newEntry;
+        } else { // current_cache_size (and max_cache_size) are > 1, don't worry about cache_head
+            cache_tail->next = newEntry;
+            cache_tail = newEntry;
+        }
+
+
+	} else { // Cache has at least one element (the head) and is not full
+
+		cache_tail->next = newRequest;
+		cache_tail = newRequest;
+
+	}
+
+    ++current_cache_size;
+
+	pthread_mutex_unlock(&cache_mutex);
+}
+
+// Returns the cache entry that matches the given filename or NULL if no entry matched
+//! USAGE OF THE CACHE ENTRY MUST BE SYNCHRONIZED OVER cache_mutex
+struct cache_entry* cache_search(const char* const filename) {
+
+    struct cache_entry* entry = cache_head;
+
+    while (entry != NULL) {
+        if (strncmp(entry->filename, filename, FILENAME_SIZE) == 0)
+            break;
+        entry = entry->next;
+    }
+
+    return entry;
+}
+
+// END CACHE CODE
 
 
 
@@ -49,7 +121,6 @@ struct request* queue_tail = NULL;
 pthread_mutex_t queue_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 void queue_addRequest(int fd, const char* const filename) {
-	pthread_mutex_lock(&queue_mutex);
 
 	struct request* newRequest = malloc( sizeof(struct request) );
 
@@ -57,7 +128,9 @@ void queue_addRequest(int fd, const char* const filename) {
 	strncpy(newRequest->filename, filename, FILENAME_SIZE);
 	newRequest->next = NULL;
 
-	if (queue_head == NULL) { // Queue was empty
+    pthread_mutex_lock(&queue_mutex);
+
+	if (queue_head == NULL) { // Queue is empty
 
 		queue_head = queue_tail = newRequest;
 
@@ -69,11 +142,14 @@ void queue_addRequest(int fd, const char* const filename) {
 	}
 
 	pthread_mutex_unlock(&queue_mutex);
+
 }
 
-// Returns dynamically allocated buffer with request filename
+// Returns the request at the head of the queue and removes it from the queue
 // Returns NULL on failure -- should never happen with semaphore synchronization!!
-// Must be freed!
+// The request must be freed by the caller!
+//
+// Calls to this function don't need to be synchronized externally because the request is removed from the queue immediately
 struct request* queue_fetchRequest() {
 	pthread_mutex_lock(&queue_mutex);
 
@@ -93,8 +169,49 @@ struct request* queue_fetchRequest() {
 // END REQUEST QUEUE CODE
 
 
+// Returns the first request in the queue that matches a cache entry, and removes it from the queue
+// Returns NULL if no such request can be found
+// The request must be freed by the caller!
+int fetchFirstCachedRequest(struct request** return_req, struct cache_entry** return_entry) {
+    pthread_mutex_lock(&queue_mutex);
+    pthread_mutex_lock(&cache_mutex);
+
+    struct request* prev = NULL;
+    struct request* req = queue_head;
+    struct cache_entry* entry = cache_head;
+
+    if (entry != NULL) {
+        while (req != NULL) {
+            while (entry != NULL) {
+                if (strncmp(req->filename, entry->filename, FILENAME_SIZE) == 0)
+                    break;
+                entry = entry->next;
+            }
+
+            if (entry != NULL)
+                break;
+
+            prev = req;
+            req = req->next;
+        }
+    }
+
+    if (entry != NULL) {
+        if (prev == NULL) { // The head of the queue is the first cached request
+
+        }
+
+        prev->next = req->next;
+
+    }
+
+    pthread_
+}
+
+
+
 // SEMAPHORES FOR QUEUE ACCESS
-sem_t dispatch_sem; // Starts at value MAX_REQUEST_QUEUE_LENGTH
+sem_t dispatch_sem; // Starts at maximum queue length set by user, will not exceed MAX_REQUEST_QUEUE_LENGTH
 sem_t worker_sem; // Starts at value 0
 
 
@@ -102,57 +219,7 @@ sem_t worker_sem; // Starts at value 0
 
 
 
-// START CACHE CODE
 
-struct cache_entry* cache_head = NULL;
-struct cache_entry* cache_tail = NULL;
-
-pthread_mutex_t cache_mutex = PTHREAD_MUTEX_INITIALIZER;
-
-void cache_addEntry(struct request* req, char* data) {
-	pthread_mutex_lock(&queue_mutex);
-
-	struct cache_entry* newEntry = malloc( sizeof(struct cache_entry) );
-
-    newEntry->req = req;
-    newEntry->data = data;
-    newEntry->next = NULL;
-
-	if (cache_head == NULL) { // Cache was empty
-
-		cache_head = cache_tail = newEntry;
-
-	} else () {
-
-
-	} else { // Queue has at least one element (the head)
-
-		queue_tail->next = newRequest;
-		queue_tail = newRequest;
-
-	}
-
-	pthread_mutex_unlock(&queue_mutex);
-}
-
-// Returns dynamically allocated buffer with request filename
-// Returns NULL on failure -- should never happen with semaphore synchronization!!
-// Must be freed!
-struct request* queue_fetchRequest() {
-	pthread_mutex_lock(&queue_mutex);
-
-    struct request *return_value = queue_head;
-
-	if (queue_head != NULL) // Queue is not empty
-		if (queue_head == queue_tail) // Queue has only one element
-			queue_head = queue_tail = NULL;
-		else
-			queue_head = queue_head->next;
-
-	pthread_mutex_unlock(&queue_mutex);
-
-	return return_value;
-}
 
 
 
@@ -324,8 +391,8 @@ int main(int argc, char *argv[]) {
 
     // argv[8] := <cache-entries>
     // The size of the cache, in number of entries
-    int cache_entries = atoi( argv[8] );
-    if (cache_entries <= 0 || cache_entries > MAX_CACHE_SIZE) {
+    max_cache_size = atoi( argv[8] );
+    if (max_cache_size <= 0 || max_cache_size > MAX_CACHE_SIZE) {
     	fprintf(stderr, "Error! Invalid cache size. (Max size is %d)\n", MAX_CACHE_SIZE);
     	exit(1);
     }
@@ -333,7 +400,7 @@ int main(int argc, char *argv[]) {
 
 
     // Initialize semaphores
-    assert( sem_init(&dispatch_sem, 0, MAX_REQUEST_QUEUE_LENGTH) == 0 ); //! Unrecoverable error
+    assert( sem_init(&dispatch_sem, 0, qlen) == 0 ); //! Unrecoverable error
     assert( sem_init(&worker_sem, 0, 0) == 0 ); //! Unrecoverable error
 
 
