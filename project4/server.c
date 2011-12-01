@@ -1,8 +1,10 @@
 
+#include <assert.h>
 #include <pthread.h>
 #include <semaphore.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "util.h"
@@ -22,27 +24,36 @@ enum mode {
 };
 
 
-
-
-
-// START REQUEST QUEUE CODE
-
 struct request {
+    int fd;
 	char filename[FILENAME_SIZE];
 
 	struct request* next;
 };
+
+struct cache_entry {
+    struct request* req;
+    char* data;
+
+    struct cache_entry* next;
+};
+
+
+
+
+// START REQUEST QUEUE CODE
 
 struct request* queue_head = NULL;
 struct request* queue_tail = NULL;
 
 pthread_mutex_t queue_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void queue_addRequest(const char* const filename) {
-	pthread_mutex_lock(queue_mutex);
+void queue_addRequest(int fd, const char* const filename) {
+	pthread_mutex_lock(&queue_mutex);
 
 	struct request* newRequest = malloc( sizeof(struct request) );
 
+    newRequest->fd = fd;
 	strncpy(newRequest->filename, filename, FILENAME_SIZE);
 	newRequest->next = NULL;
 
@@ -57,34 +68,26 @@ void queue_addRequest(const char* const filename) {
 
 	}
 
-	pthread_mutex_unlock(queue_mutex);
+	pthread_mutex_unlock(&queue_mutex);
 }
 
 // Returns dynamically allocated buffer with request filename
+// Returns NULL on failure -- should never happen with semaphore synchronization!!
 // Must be freed!
-char* queue_fetchRequest() {
-	pthread_mutex_lock(queue_mutex);
+struct request* queue_fetchRequest() {
+	pthread_mutex_lock(&queue_mutex);
 
-	char* filename = NULL;
+    struct request *return_value = queue_head;
 
-	if (queue_head != NULL) { // Queue is not empty
-		filename = malloc ( sizeof(char) * FILENAME_SIZE );
-
-		strncpy(filename, queue_head->filename, FILENAME_SIZE);
-
-		if (queue_head == queue_tail) { // Queue has only one element
-			free(queue_head);
+	if (queue_head != NULL) // Queue is not empty
+		if (queue_head == queue_tail) // Queue has only one element
 			queue_head = queue_tail = NULL;
-		} else {
-			struct request* old_head = queue_head;
+		else
 			queue_head = queue_head->next;
-			free(old_head);
-		}
-	}
 
-	pthread_mutex_unlock(queue_mutex);
+	pthread_mutex_unlock(&queue_mutex);
 
-	return filename;
+	return return_value;
 }
 
 // END REQUEST QUEUE CODE
@@ -99,26 +102,144 @@ sem_t worker_sem; // Starts at value 0
 
 
 
-//TODO: Dispatch thread code
+// START CACHE CODE
+
+struct cache_entry* cache_head = NULL;
+struct cache_entry* cache_tail = NULL;
+
+pthread_mutex_t cache_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+void cache_addEntry(struct request* req, char* data) {
+	pthread_mutex_lock(&queue_mutex);
+
+	struct cache_entry* newEntry = malloc( sizeof(struct cache_entry) );
+
+    newEntry->req = req;
+    newEntry->data = data;
+    newEntry->next = NULL;
+
+	if (cache_head == NULL) { // Cache was empty
+
+		cache_head = cache_tail = newEntry;
+
+	} else () {
+
+
+	} else { // Queue has at least one element (the head)
+
+		queue_tail->next = newRequest;
+		queue_tail = newRequest;
+
+	}
+
+	pthread_mutex_unlock(&queue_mutex);
+}
+
+// Returns dynamically allocated buffer with request filename
+// Returns NULL on failure -- should never happen with semaphore synchronization!!
+// Must be freed!
+struct request* queue_fetchRequest() {
+	pthread_mutex_lock(&queue_mutex);
+
+    struct request *return_value = queue_head;
+
+	if (queue_head != NULL) // Queue is not empty
+		if (queue_head == queue_tail) // Queue has only one element
+			queue_head = queue_tail = NULL;
+		else
+			queue_head = queue_head->next;
+
+	pthread_mutex_unlock(&queue_mutex);
+
+	return return_value;
+}
+
+
+
+
+
+
 void dispatch_thread() {
 
-	static char filename_buffer[FILENAME_SIZE];
+	char filename_buffer[FILENAME_SIZE];
 
+    while() {
 
+        usleep(0);
 
+        int fd = accept_connection();
+
+        if (fd < 0)
+            pthread_exit(NULL);
+
+        if ( get_request(fd, filename_buffer) != 0 )
+            continue;
+
+        sem_wait(&dispatch_sem);
+        queue_addRequest(fd, filename_buffer);
+        sem_post(&worker_sem);
+
+    }
 
 }
 
 
 //TODO: Worker thread code
 //FCFS Worker thread
-void fcfs_worker_thread() {}
+void fcfs_worker_thread() {
+
+    struct request* req;
+
+    while() {
+
+        usleep(0);
+
+        pthread_mutex_lock(&queue_mutex);
+
+
+        sem_wait(&worker_sem);
+        req = queue_fetchRequest();
+        sem_post(&dispatch_sem);
+
+        common_worker(req);
+
+        free(req);
+
+    }
+
+}
+
 //CRF Worker thread
-void crf_worker_thread() {}
+void crf_worker_thread() {
+
+    struct request* req;
+
+    while() {
+
+        usleep(0);
+
+
+
+        sem_wait(&worker_sem);
+        req = queue_fetchRequest();
+        sem_post(&dispatch_sem);
+
+        common_worker(req);
+
+        free(req);
+
+    }
+
+}
+
 //SFF Worker thread
 void sff_worker_thread() {}
+
+
+
+
 //Common thread code
-void common_worker() {}
+void common_worker(struct request* req) {}
 
 
 
@@ -132,16 +253,16 @@ void prefetch_thread() {}
 
 
 int main(int argc, char *argv[]) {
-    
+
     if (argc != 9) {
         fprintf(stderr, "Usage: web_server_http <port> <path> <num_dispatch> <num_workers> <num_prefetch> <qlen> <mode> <cache_entries>\n");
         exit(1);
     }
-    
+
     // argv[1] := <port>
     // Port number on which to accept incoming connections
     init( atoi( argv[1] ) );
-    
+
     // argv[2] := <path>
     // Web tree root directory
     chdir( argv[2] );
@@ -208,14 +329,19 @@ int main(int argc, char *argv[]) {
     	fprintf(stderr, "Error! Invalid cache size. (Max size is %d)\n", MAX_CACHE_SIZE);
     	exit(1);
     }
-    
+
 
 
     // Initialize semaphores
+    assert( sem_init(&dispatch_sem, 0, MAX_REQUEST_QUEUE_LENGTH) == 0 ); //! Unrecoverable error
+    assert( sem_init(&worker_sem, 0, 0) == 0 ); //! Unrecoverable error
 
 
 
 
+    // pthread_join all dispatch threads
+    // Set exit flag for worker threads
+    // pthread_join all worker threads
 
     return 0;
 }
