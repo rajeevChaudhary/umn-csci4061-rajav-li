@@ -96,7 +96,7 @@ fetchRequest()
 
 Operations used by the worker threads:
 
-processRequest(req, ent): 
+processRequest(req, ent):
    if ent is null
       make new data = req.filename.filedata
       ent = cache.addEntry(req.filename, data)
@@ -104,9 +104,8 @@ processRequest(req, ent):
    use return_result or return_error appropriately
    log request
    if prefetch not full
-      if guess_filename = nextguess(req.filename) is not null
-         prefetch.addRequest(guess_filename)
-         increment prefetch extract semaphore
+      prefetch.addRequest(req)
+      increment prefetch extract semaphore
 
 
 
@@ -172,4 +171,3 @@ prefetch:
          cache.addEntry(guess_filename, data)
 
 
-         
