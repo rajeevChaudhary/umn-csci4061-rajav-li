@@ -1,0 +1,1046 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title></title>
+<script type="text/javascript" src="outliner.js"></script><style type="text/css">
+			
+			
+			th {
+			vertical-align: bottom;
+			
+			}
+			
+			td {
+			vertical-align: top;
+			}
+			
+			td,th {
+			
+			empty-cells: show;
+			}
+			
+			.top-right-border {
+			
+			}
+			
+			.no-border {
+			border-bottom: 0px;
+			border-left: 0px;
+			}
+			
+			
+			
+			
+			table {
+			
+			font-family: Helvetica, sans-serif;
+			font-size: 12px;
+						
+			
+			}
+
+			
+			
+			.wholeDocument {
+			
+	
+			}
+		
+			
+			td.subcell {
+			border: none;
+			}
+			
+			td.content {
+			padding-left: 4px;
+			padding-bottom: 2px;
+			padding-top: 1px;
+			padding-right: 3px;
+			}
+			
+			.full {
+			height: 100%;
+			}
+			
+			.heighthack {
+			height: 8px;
+			}
+			
+			div.titlepadding { 
+			padding-right:3px;
+			padding-left:6px;
+			padding-bottom:3px;
+			padding-top: 2px;
+			}
+			
+			
+					.summary_node {
+						background: rgba(0,0,0,.12);
+						margin-bottom: 1px;
+					}
+				
+			
+			div.column {   
+			padding-right: 3px;
+			padding-left: 4px;
+			padding-top: 1px;
+			padding-bottom: 2px;
+			margin-right: 1px;
+			}
+			
+			.labelpadding {
+			padding-right: 3px;
+			padding-top: 1px;
+			padding-left: 2px;
+			}
+			
+			.indicator {
+			white-space: nowrap;
+			text-align:right;
+			margin-right: 0px;
+			vertical-align: top;
+			padding-top: 1px;
+			padding-left: 0px;
+			}
+			
+			.wholedocgutter {
+			
+			}
+			
+			div.row {
+			}
+			
+			div.headerRow {
+			}
+			
+			.expanded {
+			display: inline;
+			}
+			.collapsed {
+			display: none;
+			}
+			
+            div.palette-hit-zone {
+                position: fixed;
+                bottom: 0px;
+				height: 33%;
+                left:50%;
+                width: 66%;
+                margin-left: -33%;
+            }
+
+			div.floating-palette {
+                -webkit-border-radius: 5px;
+                -webkit-transition: opacity is fade-in-out;
+                -webkit-transition-duration: 1s;
+				background-color: rgb(64, 64, 64);
+                opacity:0.7;
+				width: 88px;
+				height: 44px;
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                margin-left: -44px;
+			}
+            
+            div.palette-cell {
+                opacity:1;
+                margin-top: 6px;
+                margin-bottom: 6px;
+                position: absolute;
+                height: 32px;
+                width: 32px;
+            }
+            
+            div.cell-divider {
+                position: absolute;
+                margin-top: 6px;
+                margin-bottom: 6px;
+                margin-left: 44px;
+                height: 32px;
+                width:0px;
+                position:absolute;
+                left:0px;
+                border-right:rgb(207, 207, 207) 2px solid;
+            }
+
+			
+			
+			
+			.note { 
+			padding-left: 5px;
+			padding-right: 3px; 
+			border: none; 
+			color:rgb(84,84,84) ;  font-style: italic;font-size: 11px;font-style: italic;font-size: 11px;
+			}
+			
+			/* Total table width is 649
+			Adjusted table width is 687 */
+			
+			.wholething {
+				width: auto;
+			}
+			
+			
+			table.row {
+				
+						width: 649px;
+						
+			
+			}
+			
+			
+    .col_width1 { 
+        width: 649px;  /* Actual width is 649 */
+    }
+
+    .col1 { 
+        
+    }
+
+    .colbackground1 { 
+        
+    }
+
+			
+			/* Level Styles */
+			
+			
+    .columntitle { 
+        text-decoration:  underline;font-weight: 900;  
+    }
+
+    .level1 { 
+        font-weight: 900;  font-size: 14px;
+    }
+
+    .levelcolor1 { 
+        
+    }
+
+    .levelguttercolor1 { 
+        
+    }
+
+    .ns-Highlight { 
+        }
+
+    .ns-Citation { 
+        text-decoration:  underline;}
+
+    .ns-Emphasis { 
+        font-style: italic;}
+
+    .ns-bg-Highlight { 
+        background-color:rgb(255,255,102) ;  }
+
+    .ns-bg-Citation { 
+        }
+
+    .ns-bg-Emphasis { 
+        }
+
+    .ns-gutter-Highlight { 
+        }
+
+    .ns-gutter-Citation { 
+        }
+
+    .ns-gutter-Emphasis { 
+        }
+</style>
+</head>
+<body class="wholeDocument"><table cellspacing="0" cellpadding="0" class="top-right-border"><tr><td class="wholething no-border">
+<!--Column Titles--><table cellspacing="0" border="0" cellpadding="0" class="headerRow heighthack"><tr><td class=" colbackground1 col_width1"><div class="columntitle titlepadding">CSci 4061 Project 4: Multi-Threaded Web Server with Caching<br>
+</div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor1"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level1 levelguttercolor1" style="width: 9px;"></td>
+<td class=" subcell wholedocgutter indicator level1 levelguttercolor1" style="width: 15px;"><img onmousedown="ioSwitch('pdL-2-4CeZ_A', event.shiftKey)" id="idL-2-4CeZ_A" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level1 subcell">Goal<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pdL-2-4CeZ_A" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">To construct a multithreaded web server using POSIX <br>threads (pthreads) in C to learn about thread programming and synchronization methods.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pbNBkjcSskA1', event.shiftKey)" id="ibNBkjcSskA1" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">The web server will be able to handle any type of files HTML, GIF, JPEG, TXT, etc. It will handle a limited portion of the HTTP web protocol (namely, the GET command to fetch a web page).<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pbNBkjcSskA1" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell" style="font-style: italic;">Code to handle the actual HTTP requests has been provided.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">Due on Nov 30th at 14:00<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor1"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level1 levelguttercolor1" style="width: 9px;"></td>
+<td class=" subcell wholedocgutter indicator level1 levelguttercolor1" style="width: 15px;"><img onmousedown="ioSwitch('pjUne3AV3VJH', event.shiftKey)" id="ijUne3AV3VJH" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level1 subcell">General Requirements<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pjUne3AV3VJH" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('plAbAAlFEjtR', event.shiftKey)" id="ilAbAAlFEjtR" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">The server will be composed of three different types of threads:<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="plAbAAlFEjtR" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('paYsvsFe9zVS', event.shiftKey)" id="iaYsvsFe9zVS" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell">Dispatcher threads<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="paYsvsFe9zVS" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img onmousedown="ioSwitch('pm0kgetfE0oB', event.shiftKey)" id="im0kgetfE0oB" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level4 subcell">Repeatedly accept an incoming connection, read the request from the connection, and place the request in a queue for a worker thread to pick up and serve, in a loop.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pm0kgetfE0oB" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor5"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level5 levelguttercolor5" style="width: 73px;"></td>
+<td class=" subcell wholedocgutter indicator level5 levelguttercolor5" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level5 subcell">There will only be one request per incoming connection.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('pccC_LUMoc6X', event.shiftKey)" id="iccC_LUMoc6X" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell">Worker threads<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pccC_LUMoc6X" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">Monitor the request queue, pick up requests from it, and serve those requests back to the client.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img onmousedown="ioSwitch('poP9yfa7ecz-', event.shiftKey)" id="ioP9yfa7ecz-" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level4 subcell">Put those requests back to another prefetching queue which will be read by the prefetcher threads.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="poP9yfa7ecz-" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor5"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level5 levelguttercolor5" style="width: 73px;"></td>
+<td class=" subcell wholedocgutter indicator level5 levelguttercolor5" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level5 subcell">Be careful to synchronize these two bounded queues!<br>
+</td>
+</tr></table></div></td></tr></table></div>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('pfTNeF_yza1N', event.shiftKey)" id="ifTNeF_yza1N" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell">Prefetcher threads<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pfTNeF_yza1N" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">Check if they can guess what the next request is going to be and bring the guessed page from the disk to the cache.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pnvFDsXd0CL-', event.shiftKey)" id="invFDsXd0CL-" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">The following functions are provided in pre-compiled object files:<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pnvFDsXd0CL-" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('podXtUdykLHx', event.shiftKey)" id="iodXtUdykLHx" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell">Run <span class="" style="font-weight: 900;  ">once</span> in the main thread;<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="podXtUdykLHx" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell" style='font-family: "Menlo", sans-serif;  '>void init( int port );<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('pi_z6TkmTJJU', event.shiftKey)" id="ii_z6TkmTJJU" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell">These two functions will be used in order, in a loop, in the dispatch threads:<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pi_z6TkmTJJU" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell" style='font-family: "Menlo", sans-serif;  '>int accept_connection( void );<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell" style='font-family: "Menlo", sans-serif;  '>int get_request( int fd, char *filename );<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('pplekX956VCX', event.shiftKey)" id="iplekX956VCX" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell">These functions will be used by the worker threads after handling the request:<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pplekX956VCX" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell" style='font-family: "Menlo", sans-serif;  '>int return_result( int fd, char *content_type, char *buf, int numbytes );<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell" style='font-family: "Menlo", sans-serif;  '>int return_error( int fd, char *buf );<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('phWCnGrgRHwo', event.shiftKey)" id="ihWCnGrgRHwo" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell">For the prefetcher thread:<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="phWCnGrgRHwo" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell" style='font-family: "Menlo", sans-serif;  '>int nextguess( char *filename, char *guessed );<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">Full documentation of these functions is in util.h<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor1"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level1 levelguttercolor1" style="width: 9px;"></td>
+<td class=" subcell wholedocgutter indicator level1 levelguttercolor1" style="width: 15px;"><img onmousedown="ioSwitch('pmEM9e5mDoaH', event.shiftKey)" id="imEM9e5mDoaH" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level1 subcell">Incoming Requests<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pmEM9e5mDoaH" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pie2XcoUvDTj', event.shiftKey)" id="iie2XcoUvDTj" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">An HTTP request has the form: GET /dir1/subdir1/.../target file HTTP/1.1 where /dir1/subdir1/.../ is assumed to be located under the web tree root location.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pie2XcoUvDTj" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">The get request function automatically parses this and returns the /dir1/subdir1/.../target file portion in the filename parameter.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">The web tree will be rooted at a specific location, specified by one of the arguments to the server. For example, if the web tree is rooted at /home/user/joe/html, then a request for /index.html would map to /home/user/joe/html/index.html.<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor1"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level1 levelguttercolor1" style="width: 9px;"></td>
+<td class=" subcell wholedocgutter indicator level1 levelguttercolor1" style="width: 15px;"><img onmousedown="ioSwitch('pepT8xrNXJio', event.shiftKey)" id="iepT8xrNXJio" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level1 subcell">Caching and Returning Results<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pepT8xrNXJio" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">The web server will implement caching, a technique that greatly improves performance for frequently fetched pages and files.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">This cache stores (request, result) entries, where result is the actual data (in memory) of the file to be returned.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pgVyu4VTCVOL', event.shiftKey)" id="igVyu4VTCVOL" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">The web cache size (number of entries) is defined by an argument, and new entries may overwrite old ones.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pgVyu4VTCVOL" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">Assume a maximum of 100 cache entries.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pd2HwQkmXz98', event.shiftKey)" id="id2HwQkmXz98" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">If a request is not in the cache, the worker will fetch the file contents from disk and then put the new mapping (request, result) in the cache.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pd2HwQkmXz98" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">When the file contents are fetched, the file size must also be determined.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">When the cache is full, replace the oldest entry in the cache with the new cache entry.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">Since multiple threads may be accessing the cache, you must synchronize access to it.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('poOTolgb4Vpe', event.shiftKey)" id="ioOTolgb4Vpe" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">Use <span class="" style="font-weight: 900;  ">return_result</span> to send the data back to the web browser from the worker threads, provided the file was opened and read correctly or the data was found in the cache.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="poOTolgb4Vpe" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">If there was any problem with accessing the file, then you should use <span class="" style="font-weight: 900;  ">return_error</span> instead.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">HTTP headers will automatically be added to the data before sending it.<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pdOVszBxc6RG', event.shiftKey)" id="idOVszBxc6RG" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">Part of returning the result is sending back a special parameter to the browser: the content-type of the data.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pdOVszBxc6RG" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('paPwtShDR0SL', event.shiftKey)" id="iaPwtShDR0SL" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell">You may make assumptions about the content-type of a file based on its extension:<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="paPwtShDR0SL" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">Files ending in .html or .htm are content-type "text/html"<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">Files ending in .jpg are content-type "image/jpeg"<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">Files ending in .gif are content-type "image/gif"<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">Files that have not been classified in the above categories may be considered, by default, to be of content-type "text/plain"<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+</div>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor1"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level1 levelguttercolor1" style="width: 9px;"></td>
+<td class=" subcell wholedocgutter indicator level1 levelguttercolor1" style="width: 15px;"><img onmousedown="ioSwitch('peqjeL839iPd', event.shiftKey)" id="ieqjeL839iPd" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level1 subcell">Prefetching<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="peqjeL839iPd" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pm3C93NF9BIU', event.shiftKey)" id="im3C93NF9BIU" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">The prefetcher will try to make a guess for the next file that the client might request for and bring that file to the cache if it is not already there.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pm3C93NF9BIU" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">The benefit of this if that if the client actually makes that request, the server can very quickly serve it from its cache.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('ppCVk_sbX0dS', event.shiftKey)" id="ipCVk_sbX0dS" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">If the prefetching queue is full, worker threads will neither try to add new requests to it nor wait for the queue to be non-full.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="ppCVk_sbX0dS" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">Assume that the prefetching queue can store 100 requests.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('pe5M0v5gFwdB', event.shiftKey)" id="ie5M0v5gFwdB" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell">Worker threads will add new requests only when the prefetching queue is not full.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pe5M0v5gFwdB" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">This is because compared to other tasks the server performs, prefetching is a low priority task.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('phZ4mArccoor', event.shiftKey)" id="ihZ4mArccoor" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">Prefetcher threads repeatedly check this queue, remove the next request, make a guess and if that guessed file is not already in the cache, bring it to the cache.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="phZ4mArccoor" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">Use <span class="" style="font-weight: 900;  ">nextguess</span> to guess the next file based on the current request. This function will return 0 and set the guessed filename if it can find a file that needs to be prefetched. Otherwise it will return a nonzero integer.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">If a guess is made, store the guessed file in the cache just like an actual request.<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor1"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level1 levelguttercolor1" style="width: 9px;"></td>
+<td class=" subcell wholedocgutter indicator level1 levelguttercolor1" style="width: 15px;"><img onmousedown="ioSwitch('pczRR8dnyx67', event.shiftKey)" id="iczRR8dnyx67" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level1 subcell">Modes of Operation<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pczRR8dnyx67" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('paZ1ua3-xVGN', event.shiftKey)" id="iaZ1ua3-xVGN" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">First Come First Served (FCFS)<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="paZ1ua3-xVGN" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">Each request is taken out of the request buffer by the worker in the same order it was inserted by the dispatcher.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pcDbuAADbH1_', event.shiftKey)" id="icDbuAADbH1_" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">Cached Requests First (CRF)<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pcDbuAADbH1_" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">The worker searches the cache to see whether any of the requests can be satisfied from the cache. If there are no cached requests, the server falls back to FCFS.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pnhK9CpWN7ap', event.shiftKey)" id="inhK9CpWN7ap" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">Smallest File First (SFF)<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pnhK9CpWN7ap" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('pf0GIV10SNZn', event.shiftKey)" id="if0GIV10SNZn" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell">The smallest file is always taken out of the request queue first by the worker. This is irrespective of whether the file is cached or not.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pf0GIV10SNZn" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">Use <span class="" style="font-weight: 900;  ">stat</span> system call to get the size of a file.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+</div>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor1"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level1 levelguttercolor1" style="width: 9px;"></td>
+<td class=" subcell wholedocgutter indicator level1 levelguttercolor1" style="width: 15px;"><img onmousedown="ioSwitch('ppO1l8zhJ7Xt', event.shiftKey)" id="ipO1l8zhJ7Xt" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level1 subcell">Request Logging<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="ppO1l8zhJ7Xt" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('poLGdKdk2qE9', event.shiftKey)" id="ioLGdKdk2qE9" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">The worker threads will carefully log each request (normal or error-related) to the file <span class="" style="font-weight: 900;  ">web_server_log</span> in the format below.<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="poLGdKdk2qE9" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('ppdS9VjOIUGo', event.shiftKey)" id="ipdS9VjOIUGo" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell" style='font-family: "Menlo", sans-serif;  '>[ThreadID#][Request#][fd][Cache HIT/MISS][Request string][bytes/error]<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="ppdS9VjOIUGo" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">
+<span class="" style="font-weight: 900;  ">ThreadID#</span> is an integer from <span class="" style='font-family: "Menlo", sans-serif;  '>0</span> to <span class="" style='font-family: "Menlo", sans-serif;  '>num_workers - 1</span> indicating the ID of the handling worker thread.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">
+<span class="" style="font-weight: 900;  ">Request#</span> is the total number of requests this specific worker thread has handled so far, including this request<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">
+<span class="" style="font-weight: 900;  ">fd </span>is the file descriptor returned by <span class="" style='font-family: "Menlo", sans-serif;  '>accept_connection()</span> for this request<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">
+<span class="" style="font-weight: 900;  ">Cache HIT/MISS</span> is either <span class="" style='font-family: "Menlo", sans-serif;  '>"HIT"</span> or <span class="" style='font-family: "Menlo", sans-serif;  '>"MISS"</span> depending on whether this specific request was found in the cache or not<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">
+<span class="" style="font-weight: 900;  ">Request string</span> is the filename buffer filled in by the <span class="" style='font-family: "Menlo", sans-serif;  '>get_request()</span> function<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">
+<span class="" style="font-weight: 900;  ">bytes/error </span>is either the number of bytes returned by a successful request or the error string returned by <span class="" style='font-family: "Menlo", sans-serif;  '>return_error()</span> if an error occurred.<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+</div>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor1"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level1 levelguttercolor1" style="width: 9px;"></td>
+<td class=" subcell wholedocgutter indicator level1 levelguttercolor1" style="width: 15px;"><img onmousedown="ioSwitch('pi213z1a1tno', event.shiftKey)" id="ii213z1a1tno" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level1 subcell">Configuration<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pi213z1a1tno" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('piOpaW0B-uL5', event.shiftKey)" id="iiOpaW0B-uL5" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell" style="font-weight: 900;  ">port<span class="" style="font-weight: 500;  "> number can be specified</span><br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="piOpaW0B-uL5" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">Only ports 1025 - 65535 may be used by default<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell" style="font-weight: 900;  ">path<span class="" style="font-weight: 500;  "> is the path to your web root location where all the files will be served from</span><br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell" style="font-weight: 900;  ">num_dispatch<span class="" style="font-weight: 500;  "> is how many dispatch threads to start up</span><br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell" style="font-weight: 900;  ">num_workers<span class="" style="font-weight: 500;  "> is how many worker threads to start up</span><br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell" style="font-weight: 900;  ">num_prefetch<span class="" style="font-weight: 500;  "> is how many prefetch threads to start up</span><br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell" style="font-weight: 900;  ">qlen <span class="" style="font-weight: 500;  ">is the fixed, bounded length of the request queue</span><br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pnfK0FfJoJsX', event.shiftKey)" id="infK0FfJoJsX" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell" style="font-weight: 900;  ">mode<span class="" style="font-weight: 500;  "> can be FCFS (value=0) or CRF (value=1) or SFF (value=2)</span><br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pnfK0FfJoJsX" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">FCFS: First Come First Served<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">CRF: Cached Requests First<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">SFF: Smallest File First<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell" style="font-weight: 900;  ">cache-entries<span class="" style="font-weight: 500;  "> is the number of entries available in the cache</span><br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pfXx81Qu43u-', event.shiftKey)" id="ifXx81Qu43u-" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">The server should be run as:<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pfXx81Qu43u-" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell" style='font-family: "Menlo", sans-serif;  '>% web_server_http port path num_dispatch num_workers num_prefetch qlen mode cache_entries<br>
+</td>
+</tr></table></div></td></tr></table></div>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor1"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level1 levelguttercolor1" style="width: 9px;"></td>
+<td class=" subcell wholedocgutter indicator level1 levelguttercolor1" style="width: 15px;"><img onmousedown="ioSwitch('ppcfcAqJU8DI', event.shiftKey)" id="ipcfcAqJU8DI" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level1 subcell">Provided Files and How To Use Them<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="ppcfcAqJU8DI" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">All of the networking system calls and HTTP protocol parsing are in provided functions. There is also a function to guess the next request.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">Some of the library function calls assume that the program has <span class="" style='font-family: "Menlo", sans-serif;  '>chdir</span>ed to the web tree root directory. Ensure that this <span class="" style='font-family: "Menlo", sans-serif;  '>chdir</span> takes place somewhere in the beginning.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pnbcEXgo4Ti4', event.shiftKey)" id="inbcEXgo4Ti4" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">Here is a list of the provided files:<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pnbcEXgo4Ti4" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('pb7fgtPWWmGp', event.shiftKey)" id="ib7fgtPWWmGp" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell" style="font-weight: 900;  ">makefile<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pb7fgtPWWmGp" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">This can be used to compile the server using the provided object files. Using this makefile is not mandatory.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('pcMANaIvHuS0', event.shiftKey)" id="icMANaIvHuS0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell" style="font-weight: 900;  ">util.h<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pcMANaIvHuS0" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">This contains a very detailed documentation of each function <span class="" style="font-weight: 900;  ">that you must study and understand before using the functions.</span><br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img onmousedown="ioSwitch('pdDW-fgRgDRm', event.shiftKey)" id="idDW-fgRgDRm" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level3 subcell" style="font-weight: 900;  ">util-http.o<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pdDW-fgRgDRm" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor4"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level4 levelguttercolor4" style="width: 57px;"></td>
+<td class=" subcell wholedocgutter indicator level4 levelguttercolor4" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level4 subcell">This is the compiled object file for the functions described in util.h to be used for the web server. Compile this into the multi-threaded server code.<br>
+</td>
+</tr></table></div></td></tr></table></div>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell" style="font-weight: 900;  ">Remember to use <span class="" style='font-family: "Menlo", sans-serif;  '>-D REENTRANT</span> when compiling your C source files and <span class="" style='font-family: "Menlo", sans-serif;  '>-lpthread</span> when linking<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor1"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level1 levelguttercolor1" style="width: 9px;"></td>
+<td class=" subcell wholedocgutter indicator level1 levelguttercolor1" style="width: 15px;"><img onmousedown="ioSwitch('pfR0uf4w5Z8W', event.shiftKey)" id="ifR0uf4w5Z8W" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level1 subcell" style="font-weight: 900;  ">Simplifying Assumptions<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pfR0uf4w5Z8W" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">The maximum number of dispatch threads will be 100<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">The maximum number of worker threads will be 100<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">The maximum number of prefetched threads will be 100<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">The maximum size of the cache will be 100 entries<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">The maximum length of the request queue will be 100 requests<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">Any HTTP request for a filename containing two consecutive periods or two consecutive slashes (".." or "//") will automatically be detected as a bad request by the provided compiled functions for security reasons.<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor1"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level1 levelguttercolor1" style="width: 9px;"></td>
+<td class=" subcell wholedocgutter indicator level1 levelguttercolor1" style="width: 15px;"><img onmousedown="ioSwitch('pk3sV89hvvzt', event.shiftKey)" id="ik3sV89hvvzt" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level1 subcell">Documentation<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pk3sV89hvvzt" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('paxlu68-bnDM', event.shiftKey)" id="iaxlu68-bnDM" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">Exactly as described in previous specifications in this course, you must provide a README file which describes your program as previously outlined. At the top of your README file and main C source file, please include the following comment:<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="paxlu68-bnDM" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell" style='font-family: "Menlo", sans-serif;  '>/* csci4061 F2011 Assignment 4<br>*section: one_digit_number<br>*login: itlabs_login_name(login used to submit)<br>*date: mm/dd/yy<br>*names: Name of each member of the team<br>*ID: ID of each member of the team */<br>
+</td>
+</tr></table></div></td></tr></table></div>
+</div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor1"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level1 levelguttercolor1" style="width: 9px;"></td>
+<td class=" subcell wholedocgutter indicator level1 levelguttercolor1" style="width: 15px;"><img onmousedown="ioSwitch('pjNdIn2_5XAL', event.shiftKey)" id="ijNdIn2_5XAL" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level1 subcell" style='font-family: "Menlo", sans-serif;  '>Grading<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pjNdIn2_5XAL" class="expanded">
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('pcXr1scp7rO-', event.shiftKey)" id="icXr1scp7rO-" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">25%<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="pcXr1scp7rO-" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">README, Documentation within code, coding and style very important (indentations, readability of code, use of defined constants rather than numbers)<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img onmousedown="ioSwitch('ph1w6CNrKD3o', event.shiftKey)" id="ih1w6CNrKD3o" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" border="0" alt="V" src="Expanded.png" title="collapse"></td>
+<td class=" content level2 subcell">75%<br>
+</td>
+</tr></table></div></td></tr></table>
+<div id="ph1w6CNrKD3o" class="expanded"><table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor3"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level3 levelguttercolor3" style="width: 41px;"></td>
+<td class=" subcell wholedocgutter indicator level3 levelguttercolor3" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level3 subcell">Correctness, error handling, meeting the specifications<br>
+</td>
+</tr></table></div></td></tr></table></div>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">Make sure to pay attention to documentation and coding style. A perfectly working program will not receive full credit if it is undocumented and very difficult to read.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">We will use GCC version 4.2 to compile your code.<br>
+</td>
+</tr></table></div></td></tr></table>
+<table cellspacing="0" border="0" cellpadding="0" class="row heighthack"><tr><td class=" col1 colbackground1 col_width1" style=""><div class=" full levelcolor2"><table border="0" cellspacing="0" cellpadding="0" style="height:100%" class=" col_width1 col1"><tr>
+<td class=" subcell wholedocgutter level2 levelguttercolor2" style="width: 25px;"></td>
+<td class=" subcell wholedocgutter indicator level2 levelguttercolor2" style="width: 15px;"><img border="0" style="margin-left: 3px; margin-right:3px; margin-top: 3px;" alt="*" src="LeafRowHandle.png"></td>
+<td class=" content level2 subcell">The grading will be done on ITLabs machines only.<br>
+</td>
+</tr></table></div></td></tr></table>
+</div>
+</td></tr></table></body>
+</html>
