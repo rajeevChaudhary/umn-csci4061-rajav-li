@@ -1,0 +1,175 @@
+queue: doubly-linked list with sentinel
+cache: doubly-linked list with sentinel and associated hash table
+prefetch: doubly-linked list with sentinel
+
+cache hash table collision lists are doubly linked with trailing NULL at head and tail, hashes link to head
+
+
+
+List operations:
+
+LIST-ADD(L, x): Adds element x to linked list L
+
+LIST-REMOVE(L, *x): Given an element x in linked list L, removes the element from the list without freeing it
+
+LIST-SHIFT(L): Removes the element at the head of linked list L and returns a pointer to it
+
+
+
+
+Hash operations:
+
+HASHED-LIST-ADD(H, x): Adds element x (with key x.filename) to list H and its associated hash table
+
+HASHED-LIST-SHIFT(H): Removes the element at the head of list H from the list and its associated hash table
+
+HASHED-LIST-SEARCH(H, key): Returns the element in list H with hash key 'key'
+
+
+
+
+
+Operations on queue:
+
+addRequest(fd, fn): Adds new request with file descriptor fd and filename fn to the end of the request queue
+   size = fn.filesize
+   make a new request 'req' := (fd, fn, size)
+   LIST-ADD(queue, req)
+
+fetchRequest(): Removes and returns the element at the front of the request queue
+   return LIST-SHIFT(queue)
+
+fetchSmallRequest(): Removes and returns the element in the request queue with the smallest file size
+   small = NULL
+   smallsize = inf
+   for each request 'req' in queue
+      if req.filesize < smallsize
+         small = req
+         smallsize = req.filesize
+   LIST-REMOVE(queue, small)
+   return small
+
+
+
+
+Operations on cache:
+
+addEntry(fn, data): Adds new cache entry with filename fn and file data data to the end of the cache list and hashes it
+   make a new entry 'ent' := (fn, data)
+   if cache is full
+      HASHED-LIST-SHIFT(cache)
+   HASHED-LIST-ADD(cache, ent)
+
+search(fn): Returns a pointer to the cache entry matching filename fn, or null if no such entry exists in the cache
+   return HASHED-LIST-SEARCH(cache, fn)
+
+
+
+
+
+Operations on both the queue and the cache:
+
+fetchCachedRequest(): Removes and returns the first element in the request queue that is cached, with its cache entry
+   for each request 'req' in queue
+      ent = cache.search( req.filename )
+      if ent is not null
+         LIST-REMOVE(queue, req)
+         return (req, ent)
+   return (queue.fetchRequest(), null)
+
+
+
+
+
+Operations on prefetch:
+
+addRequest(req)
+   LIST-ADD(prefetch, req)
+
+fetchRequest()
+   return LIST-SHIFT(prefetch)
+
+
+
+
+
+
+Operations used by the worker threads:
+
+processRequest(req, ent): 
+   if ent is null
+      make new data = req.filename.filedata
+      ent = cache.addEntry(req.filename, data)
+   determine content type of data
+   use return_result or return_error appropriately
+   log request
+   if prefetch not full
+      if guess_filename = nextguess(req.filename) is not null
+         prefetch.addRequest(guess_filename)
+         increment prefetch extract semaphore
+
+
+
+
+
+dispatch:
+   make integer fd
+   make string filename of size 1024
+   while fd = accept_connection() is nonnegative
+      if get_request(fd, &filename) is 0
+         decrement or block queue insert semaphore
+         queue.addRequest(fd, filename)
+         increment queue extract semaphore
+
+//! Workers should only exit once the request queue is empty
+
+
+FCFS worker:
+   make request req
+   make cache entry ent
+   while global_exit is false
+      decrement or block queue extract semaphore
+      req = queue.fetchRequest()
+      increment queue insert semaphore
+
+      ent = cache.search(req.filename)
+
+      processRequest(req, ent)
+
+CRF worker:
+   make request req
+   make cache entry ent
+   while global_exit is false
+      decrement or block queue extract semaphore
+      (req, ent) = fetchCachedRequest()
+      increment queue insert semaphore
+
+      processRequest(req, ent)
+
+SFF worker:
+   make request req
+   make cache entry ent
+   while global_exit is false
+      decrement or block queue extract semaphore
+      req = queue.fetchSmallRequest()
+      increment queue insert semaphore
+
+      ent = cache.search(req.filename)
+
+      processRequest(req, ent)
+
+
+//! Upon global exit, prefetch should probably just exit right away
+
+
+prefetch:
+   make new string guess_filename
+   while global_exit is false
+      decrement or block prefetch extract semaphore
+      guess_filename = nextguess(prefetch.fetchRequest())
+      if guess_filename is not null
+         make new data = guess_filename.filedata
+         cache.addEntry(guess_filename, data)
+
+
+         
