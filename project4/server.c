@@ -38,6 +38,11 @@ struct cache_entry {
     struct cache_entry* next;
 };
 
+struct cached_request {
+	struct request req;
+	char* data;
+};
+
 
 
 
@@ -51,7 +56,7 @@ int max_cache_size; // Set by user, will not exceed MAX_CACHE_SIZE
 
 pthread_mutex_t cache_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void cache_addEntry(const char* const filename, const char* const data) {
+void cache_addEntry(const char* const filename, char* data) {
 
 	struct cache_entry* newEntry = malloc( sizeof(struct cache_entry) );
 
@@ -69,7 +74,7 @@ void cache_addEntry(const char* const filename, const char* const data) {
 
         //Replace the oldest entry in the cache with the new entry
 
-        struct cache_entry old_head = cache_head;
+        struct cache_entry* old_head = cache_head;
         cache_head = cache_head->next;
         free(old_head);
 
@@ -83,8 +88,8 @@ void cache_addEntry(const char* const filename, const char* const data) {
 
 	} else { // Cache has at least one element (the head) and is not full
 
-		cache_tail->next = newRequest;
-		cache_tail = newRequest;
+		cache_tail->next = newEntry;
+		cache_tail = newEntry;
 
 	}
 
@@ -205,7 +210,10 @@ int fetchFirstCachedRequest(struct request** return_req, struct cache_entry** re
 
     }
 
-    pthread_
+    pthread_mutex_unlock(&queue_mutex);
+    pthread_mutex_unlock(&cache_mutex);
+
+    return 1;
 }
 
 
@@ -230,7 +238,7 @@ void dispatch_thread() {
 
 	char filename_buffer[FILENAME_SIZE];
 
-    while() {
+    for (;;) {
 
         usleep(0);
 
@@ -257,7 +265,7 @@ void fcfs_worker_thread() {
 
     struct request* req;
 
-    while() {
+    for (;;) {
 
         usleep(0);
 
@@ -268,7 +276,7 @@ void fcfs_worker_thread() {
         req = queue_fetchRequest();
         sem_post(&dispatch_sem);
 
-        common_worker(req);
+        //common_worker(req);
 
         free(req);
 
@@ -281,7 +289,7 @@ void crf_worker_thread() {
 
     struct request* req;
 
-    while() {
+    for (;;) {
 
         usleep(0);
 
@@ -291,7 +299,7 @@ void crf_worker_thread() {
         req = queue_fetchRequest();
         sem_post(&dispatch_sem);
 
-        common_worker(req);
+        //common_worker(req);
 
         free(req);
 
@@ -306,7 +314,7 @@ void sff_worker_thread() {}
 
 
 //Common thread code
-void common_worker(struct request* req) {}
+//void common_worker(struct request* req) {}
 
 
 
