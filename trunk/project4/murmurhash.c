@@ -197,7 +197,10 @@ void print_hash_table() {
 
 
 struct elem* hash_search(const char* const data) {
+
 	unsigned hash = MurmurHash2(data, 1024, 436) % 100;
+
+	return hash_table[hash];
 }
 
 
@@ -241,6 +244,14 @@ int main () {
 
 	print_list();
 	print_hash_table();
+
+    char key[1024];
+
+    strncpy(key, s1, 1024);
+
+	struct elem* e = hash_search(key);
+
+	printf("Search result: %s\n", e->data);
 
 
 }
