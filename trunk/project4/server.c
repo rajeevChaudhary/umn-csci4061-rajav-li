@@ -647,6 +647,8 @@ char * getFile(const char* filename) {
 	return data;
 }
 
+//SUMMARY
+// Returns the file size of file 'filename'
 intmax_t getFileSize(const char* filename) {
 
 	fprintf(stderr, "getFileSize: Getting size of file %s\n", filename);
@@ -663,6 +665,8 @@ intmax_t getFileSize(const char* filename) {
 
 char content_type_return_val[50];
 
+//SUMMARY
+// Returns the content type of the file at 'filename'
 char* getFileContentType(const char* const filename) {
 	fprintf(stderr, "getFileContentType: Detecting content type of file %s\n", filename);
 
@@ -1016,6 +1020,8 @@ void *worker_thread(void * id) {
 		pthread_mutex_unlock(&queue_mutex);
 
 		error = process_request(bundle, &cache_hit);
+
+		fprintf(stderr, "worker_thread: Done processing request\n");
 
 		++requests_handled;
 
