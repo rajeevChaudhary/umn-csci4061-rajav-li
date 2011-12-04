@@ -27,6 +27,9 @@ HASHED-LIST-SEARCH(H, key): Returns the element in list H with hash key 'key'
 
 
 
+init_lists():
+
+
 
 
 Operations on queue:

@@ -25,16 +25,18 @@
 
 
 
-// Application meta information
+
 enum mode {
 	FCFS = 0,
 	CRF = 1,
 	SFF = 2
 };
 
-FILE *logfile; //File descriptor ("web_server_log" in web tree root dir)
+FILE *logfile; //"web_server_log" in web tree root dir
 pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+// This is set to true when all dispatch threads exit
+// It signifies that all other threads should finish their work so the server can exit cleanly
 int global_exit = 0;
 
 
@@ -49,6 +51,7 @@ int global_exit = 0;
 
 // MurmurHash 2 algorithm created by Austin Appleby. Code is in the public domain.
 // (Current version is MurmurHash 3; This version is simpler.)
+// This hash function is used for keying the filenames of cache entries.
 uint32_t MurmurHash2 ( const void * key, int len, uint32_t seed )
 {
   // 'm' and 'r' are mixing constants generated offline.
@@ -110,7 +113,7 @@ uint32_t MurmurHash2 ( const void * key, int len, uint32_t seed )
 
 
 
-
+//This struct is the type of the main request queue and the prefetch request queue
 struct request {
     int fd;
 	char filename[FILENAME_SIZE];
@@ -120,6 +123,7 @@ struct request {
     struct request* prev;
 };
 
+//This struct is used for the cache
 struct cache_entry {
     char filename[FILENAME_SIZE];
     char* filedata;
@@ -132,23 +136,34 @@ struct cache_entry {
     struct cache_entry* prev_collision;
 };
 
+//This struct is used to package request/cache_entry pairs for returning from the
+//(*getRequest) family of functions for usage in processRequest
 struct request_bundle {
 	struct request* req;
 	struct cache_entry* ent;
 };
 
 
+
+
 struct request *queue_sentinel;
 int queue_size;
-int max_queue_size;
+int max_queue_size; // Set by user, will not exceed MAX_REQUEST_QUEUE_LENGTH
 pthread_mutex_t queue_mutex = PTHREAD_MUTEX_INITIALIZER;
+// Condition: Queue has items to get
+// Checked by worker threads
 pthread_cond_t queue_get_cond = PTHREAD_COND_INITIALIZER;
+// Condition: Queue has room to put new items
+// Checked by dispatch threads
 pthread_cond_t queue_put_cond = PTHREAD_COND_INITIALIZER;
+
 
 struct request *prefetch_sentinel;
 int prefetch_size;
 int max_prefetch_size = MAX_PREFETCH_QUEUE_LENGTH;
 pthread_mutex_t prefetch_mutex = PTHREAD_MUTEX_INITIALIZER;
+// Condition: Prefetch queue has items to get
+// Checked by prefetch threads
 pthread_cond_t prefetch_get_cond = PTHREAD_COND_INITIALIZER;
 
 struct cache_entry *cache_sentinel;
@@ -157,7 +172,11 @@ int cache_size;
 int max_cache_size; // Set by user, will not exceed MAX_CACHE_SIZE
 pthread_mutex_t cache_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-// This function expects max_cache_size to be initialized
+
+//SUMMARY
+// Initializes the linked lists by allocating the sentinels and setting up their pointers
+//NOTES
+// This function expects global variable max_cache_size to be set before being called
 void init_lists() {
 	queue_sentinel = malloc( sizeof(struct request) );
 	queue_sentinel->next = queue_sentinel;
@@ -176,9 +195,14 @@ void init_lists() {
 }
 
 
-
+//SUMMARY
+// Allocates and initializes a request
+//RETURNS
+// A pointer to the created request
 struct request* createRequest(int fd, const char* const fn, intmax_t fs) {
-	struct request* req = malloc( sizeof(struct request) );
+	struct request* req = (struct request*)malloc( sizeof(struct request) );
+
+	assert( req != NULL );
 
 	req->fd = fd;
 	strncpy(req->filename, fn, FILENAME_SIZE);
@@ -190,15 +214,22 @@ struct request* createRequest(int fd, const char* const fn, intmax_t fs) {
 	return req;
 }
 
+//SUMMARY
+// Deallocates request 'req'
 void destroyRequest(struct request* req) {
 	free( req );
 }
 
 
 
-
+//SUMMARY
+// Allocates and initializes a cache entry
+//RETURNS
+// A pointer to the created request
 struct cache_entry* createCacheEntry(const char* const fn, char* data, intmax_t fs) {
-	struct cache_entry* ent = malloc( sizeof(struct cache_entry) );
+	struct cache_entry* ent = (struct cache_entry*)malloc( sizeof(struct cache_entry) );
+
+	assert( ent != NULL );
 
 	strncpy(ent->filename, fn, FILENAME_SIZE);
 	ent->filedata = data;
@@ -212,7 +243,8 @@ struct cache_entry* createCacheEntry(const char* const fn, char* data, intmax_t 
 	return ent;
 }
 
-// should destroy file data? yes.
+//SUMMARY
+// Deallocates cache entry 'ent' and its contained data
 void destroyCacheEntry(struct cache_entry* ent) {
 	free( ent->filedata );
 	free( ent );
@@ -228,6 +260,8 @@ void destroyCacheEntry(struct cache_entry* ent) {
 // LIST-ADD, LIST-REMOVE, and LIST-SHIFT defined on the queue
 void q_add(struct request* r) {
 
+	assert ( r != NULL );
+
 	queue_sentinel->prev->next = r;
 	r->prev = queue_sentinel->prev;
 	queue_sentinel->prev = r;
@@ -238,6 +272,8 @@ void q_add(struct request* r) {
 }
 
 void q_remove(struct request* r) {
+
+	assert ( r->prev != NULL && r->next != NULL );
 
 	if (r != queue_sentinel) {
 		r->prev->next = r->next;
@@ -252,6 +288,8 @@ struct request* q_first() {
 
 	struct request* head = queue_sentinel->next;
 
+	assert ( head != NULL );
+
 	if (head != queue_sentinel)
 		return head;
 	else
@@ -262,6 +300,8 @@ struct request* q_first() {
 struct request* q_nextOf(struct request* r) {
 
 	r = r->next;
+
+	assert( r != NULL );
 
 	if (r == queue_sentinel)
 		return NULL;
@@ -288,6 +328,8 @@ struct request* q_shift() {
 // LIST-ADD, LIST-REMOVE, and LIST-SHIFT defined on the prefetch queue
 void p_add(struct request* r) {
 
+	assert ( r != NULL );
+
 	prefetch_sentinel->prev->next = r;
 	r->prev = prefetch_sentinel->prev;
 	prefetch_sentinel->prev = r;
@@ -298,6 +340,8 @@ void p_add(struct request* r) {
 }
 
 void p_remove(struct request* r) {
+
+	assert ( r->prev != NULL && r->next != NULL );
 
 	if (r != prefetch_sentinel) {
 		r->prev->next = r->next;
@@ -312,6 +356,8 @@ struct request* p_first() {
 
 	struct request* head = prefetch_sentinel->next;
 
+	assert ( head != NULL );
+
 	if (head == prefetch_sentinel)
 		return NULL;
 	else
@@ -322,6 +368,8 @@ struct request* p_first() {
 struct request* p_nextOf(struct request* r) {
 
 	r = r->next;
+
+	assert( r != NULL );
 
 	if (r == prefetch_sentinel)
 		return NULL;
@@ -444,6 +492,10 @@ struct cache_entry* c_shift() {
 // No other synchronization needed, since old entries will automatically be displaced once cache is full
 void cache_putEntry(struct cache_entry* ent) {
 
+	assert( ent->filedata != NULL );
+
+	fprintf(stderr, "cache_putEntry: Adding entry for filename %s", ent->filename);
+
 	if (cache_size >= max_cache_size) // Should never be > (We should check! That would be a leak!)
 		destroyCacheEntry( c_shift() ); // This will also free the file data stored in the entry
 
@@ -470,6 +522,8 @@ struct cache_entry* cache_search(const char* const fn) {
 // Must be synchronized over the "queue put" semaphore
 // The "queue get" semaphore should be incremented following the call
 void queue_putRequest(struct request* req) {
+
+	fprintf(stderr, "queue_putRequest: Adding request for connection %d with filename %s\n", req->fd, req->filename);
 
 	q_add(req);
 
@@ -590,21 +644,25 @@ struct request_bundle getCachedRequest() {
 // Reads in the given file and returns a pointer to the data in memory or NULL on failure
 char * getFile(const char* filename) {
 
+	fprintf(stderr, "getFile: Getting file %s\n", filename);
+
 	FILE* file = fopen(filename, "rb");
 	intmax_t fileLength;
 
 	if (file == NULL)
 		return NULL; //Error
 
+	fprintf(stderr, "getFile: File opened successfully\n");
+
 	fseek(file, 0, SEEK_END);
 	fileLength = ftell(file);
 	fseek(file, 0, SEEK_SET);
 
+	fprintf(stderr, "getFile: File seek succeeded, length retrieved: %jd\n", fileLength);
+
 	char* data = (char *)malloc( fileLength + 1 );
-	if (data == NULL) {
-		fclose(file);
-		return NULL; //Error allocating
-	}
+
+	assert( data != NULL );
 
 	assert( fread(data, fileLength, 1, file) == 1 );
 	fclose(file);
@@ -614,10 +672,14 @@ char * getFile(const char* filename) {
 
 intmax_t getFileSize(const char* filename) {
 
+	fprintf(stderr, "getFileSize: Getting size of file %s\n", filename);
+
 	struct stat stat_buf;
 
-	if ( stat(filename, &stat_buf) == 0 )
-		return stat_buf.st_size;
+	if ( stat(filename, &stat_buf) == 0 ) {
+		fprintf(stderr, "Size gotten: %jd\n", (intmax_t)stat_buf.st_size);
+		return (intmax_t)stat_buf.st_size;
+	}
 	else
 		return -1;
 }
@@ -655,6 +717,8 @@ void logRequest(struct request_bundle bundle, int thread_id, int requests_handle
 
 const char* process_request(struct request_bundle bundle) {
 
+	fprintf(stderr, "process_request: Processing request on connection %d with filename %s\n", bundle.req->fd, bundle.req->filename);
+
 	assert( bundle.req != NULL );
 
 	char* filename = bundle.req->filename;
@@ -664,9 +728,11 @@ const char* process_request(struct request_bundle bundle) {
 	char* error = NULL;
 
 	if (bundle.ent != NULL) {
+		fprintf(stderr, "process_request: Cache hit\n");
 		data = bundle.ent->filedata;
 		filesize = bundle.ent->filesize;
 	} else {
+		fprintf(stderr, "process_request: Cache miss, getting file\n");
 		data = getFile(filename);
 
 		filesize = getFileSize(filename);
@@ -695,20 +761,24 @@ void *dispatch_thread(void * ignored) {
 	intmax_t filesize;
 	struct request* req;
 
-	while ( (fd = accept_connection()) >= 0 ) {
-		fprintf(stderr,"Got connection: %d\n", fd);
-		if (get_request(fd, filename_buffer) == 0) {
-			fprintf(stderr, "Got request for: %s\n", filename_buffer);
+	fprintf(stderr, "dispatch_thread: Starting up\n");
 
-			if (filename_buffer[0] == '/')
+	while ( (fd = accept_connection()) >= 0 ) {
+		fprintf(stderr,"dispatch_thread: Got connection: %d\n", fd);
+		if (get_request(fd, filename_buffer) == 0) {
+			fprintf(stderr, "dispatch_thread: Got request for: %s\n", filename_buffer);
+
+			if (filename_buffer[0] == '/') {
+				fprintf(stderr, "dispatch_thread: Trimming leading / from filename\n");
+
 				filename = &filename_buffer[1];
-			else
+			} else
 				filename = &filename_buffer[0];
 
-			fprintf(stderr, "Acting on file: %s\n", filename);
+			fprintf(stderr, "dispatch_thread: Acting on file: %s\n", filename);
 
 			if ((filesize = getFileSize(filename)) == -1)
-				fprintf(stderr, "Error getting file size in dispatch thread\n");
+				fprintf(stderr, "dispatch_thread: Error getting file size in dispatch thread\n");
 			else {
 
 				req = createRequest(fd, filename, filesize);
@@ -728,6 +798,8 @@ void *dispatch_thread(void * ignored) {
 			}
 		}
 	}
+
+	fprintf(stderr, "dispatch_thread: Shutting down\n");
 }
 
 struct request_bundle (*getRequest)();
@@ -737,6 +809,8 @@ void *worker_thread(void * id) {
 	int thread_id = *((int*)id);
 	int requests_handled = 0;
 	const char* error;
+
+	fprintf(stderr, "worker_thread: Starting up\n");
 
 	while (global_exit == 0) {
 		pthread_mutex_lock(&queue_mutex);
@@ -749,6 +823,8 @@ void *worker_thread(void * id) {
 		pthread_mutex_lock(&cache_mutex);
 
 		bundle = (*getRequest)();
+
+		fprintf(stderr, "worker_thread: Got request for connection %d with filename %s\n", bundle.req->fd, bundle.req->filename);
 
 		pthread_cond_signal(&queue_put_cond);
 		pthread_mutex_unlock(&queue_mutex);
@@ -774,6 +850,8 @@ void *worker_thread(void * id) {
 
 	}
 
+	fprintf(stderr, "worker_thread: Should exit, starting to empty request queue\n");
+
 	while (queue_size > 0) {
 		pthread_mutex_lock(&queue_mutex);
 		pthread_mutex_lock(&cache_mutex);
@@ -794,6 +872,8 @@ void *worker_thread(void * id) {
 
 		destroyRequest(bundle.req);
 	}
+
+	fprintf(stderr, "worker_thread: Shutting down\n");
 }
 
 void *prefetch_thread(void *ignored) {
