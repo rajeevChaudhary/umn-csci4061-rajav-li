@@ -123,7 +123,6 @@ uint32_t MurmurHash2 ( const void * key, int len, uint32_t seed )
 struct request {
     int fd;
 	char filename[FILENAME_SIZE];
-	intmax_t filesize;
 
 	struct request* next;
     struct request* prev;
@@ -212,16 +211,15 @@ void init_lists() {
 // Allocates and initializes a request
 //RETURNS
 // A pointer to the created request
-struct request* createRequest(int fd, const char* const fn, intmax_t fs) {
+struct request* createRequest(int fd, const char* const fn) {
 	struct request* req = (struct request*)malloc( sizeof(struct request) );
 
 	assert( req != NULL );
 
-	fprintf(stderr, "createRequest: Allocated new request with fd %d, filename %s, and filesize %jd\n", fd, fn, fs);
+	fprintf(stderr, "createRequest: Allocated new request with fd %d and filename %s\n", fd, fn);
 
 	req->fd = fd;
 	strncpy(req->filename, fn, FILENAME_SIZE);
-	req->filesize = fs;
 
 	req->next = NULL;
 	req->prev = NULL;
@@ -232,7 +230,7 @@ struct request* createRequest(int fd, const char* const fn, intmax_t fs) {
 //SUMMARY
 // Deallocates request 'req'
 void destroyRequest(struct request* req) {
-	fprintf(stderr, "destroyRequest: Deallocating request with fd %d, filename %s, and filesize %jd\n", req->fd, req->filename, req->filesize);
+	fprintf(stderr, "destroyRequest: Deallocating request with fd %d and filename %s\n", req->fd, req->filename);
 	free( req );
 }
 
@@ -615,6 +613,75 @@ struct cache_entry* c_shift() {
 
 
 
+//////// File operations
+
+//SUMMARY
+// Reads in file at path 'filename'
+//RETURNS
+// A char (bytewise) pointer to the data in memory or NULL on failure
+char * getFile(const char* filename) {
+
+	fprintf(stderr, "getFile: Getting file %s\n", filename);
+
+	FILE* file = fopen(filename, "rb");
+	intmax_t fileLength;
+
+	if (file == NULL)
+		return NULL; //Error
+
+	fprintf(stderr, "getFile: File opened successfully\n");
+
+	fseek(file, 0, SEEK_END);
+	fileLength = ftell(file);
+	fseek(file, 0, SEEK_SET);
+
+	fprintf(stderr, "getFile: File seek succeeded, length retrieved: %jd\n", fileLength);
+
+	char* data = (char *)malloc( fileLength + 1 );
+
+	assert( data != NULL );
+
+	assert( fread(data, fileLength, 1, file) == 1 );
+	fclose(file);
+
+	return data;
+}
+
+intmax_t getFileSize(const char* filename) {
+
+	fprintf(stderr, "getFileSize: Getting size of file %s\n", filename);
+
+	struct stat stat_buf;
+
+	if ( stat(filename, &stat_buf) == 0 ) {
+		fprintf(stderr, "getFileSize: Size gotten: %jd\n", (intmax_t)stat_buf.st_size);
+		return (intmax_t)stat_buf.st_size;
+	}
+	else
+		return -1;
+}
+
+char* getFileContentType(const char* const filename) {
+	fprintf(stderr, "getFileContentType: Detecting content type of file %s\n", filename);
+
+	const char* extension = strrchr(filename, '.');
+	if (extension == NULL)
+		return "text/plain";
+
+	++extension;
+
+	if (strcmp(extension, "htm") == 0 || strcmp(extension, "html") == 0)
+		return "text/html";
+	else if (strcmp(extension, "gif") == 0)
+		return "image/gif";
+	else if (strcmp(extension, "jpg") == 0 || strcmp(extension, "jpeg") == 0)
+		return "image/jpeg";
+	else
+		return "text/plain";
+}
+
+
+
 
 
 //////// Interface operations on the request queue, prefetch queue, and the cache
@@ -708,12 +775,13 @@ struct request_bundle queue_getSmallRequest() {
 	//assert (queue_size != 0);
 
 	struct request* small = req;
-	intmax_t smallsize = req->filesize;
+	intmax_t smallsize = getFileSize(req->filename);
 
 	while ( (req = q_nextOf(req)) != NULL ) {
-		if (req->filesize < smallsize) {
+		intmax_t thissize = getFileSize(req->filename);
+		if (thissize < smallsize) {
 			small = req;
-			smallsize = req->filesize;
+			smallsize = thissize;
 		}
 	}
 
@@ -790,91 +858,23 @@ struct request_bundle getCachedRequest() {
 
 
 
-
-
-
-//SUMMARY
-// Reads in file at path 'filename'
-//RETURNS
-// A char (bytewise) pointer to the data in memory or NULL on failure
-char * getFile(const char* filename) {
-
-	fprintf(stderr, "getFile: Getting file %s\n", filename);
-
-	FILE* file = fopen(filename, "rb");
-	intmax_t fileLength;
-
-	if (file == NULL)
-		return NULL; //Error
-
-	fprintf(stderr, "getFile: File opened successfully\n");
-
-	fseek(file, 0, SEEK_END);
-	fileLength = ftell(file);
-	fseek(file, 0, SEEK_SET);
-
-	fprintf(stderr, "getFile: File seek succeeded, length retrieved: %jd\n", fileLength);
-
-	char* data = (char *)malloc( fileLength + 1 );
-
-	assert( data != NULL );
-
-	assert( fread(data, fileLength, 1, file) == 1 );
-	fclose(file);
-
-	return data;
-}
-
-intmax_t getFileSize(const char* filename) {
-
-	fprintf(stderr, "getFileSize: Getting size of file %s\n", filename);
-
-	struct stat stat_buf;
-
-	if ( stat(filename, &stat_buf) == 0 ) {
-		fprintf(stderr, "getFileSize: Size gotten: %jd\n", (intmax_t)stat_buf.st_size);
-		return (intmax_t)stat_buf.st_size;
-	}
-	else
-		return -1;
-}
-
-char* getFileContentType(const char* const filename) {
-	fprintf(stderr, "getFileContentType: Detecting content type of file %s\n", filename);
-
-	const char* extension = strrchr(filename, '.');
-	if (extension == NULL)
-		return "text/plain";
-
-	++extension;
-
-	if (strcmp(extension, "htm") == 0 || strcmp(extension, "html") == 0)
-		return "text/html";
-	else if (strcmp(extension, "gif") == 0)
-		return "image/gif";
-	else if (strcmp(extension, "jpg") == 0 || strcmp(extension, "jpeg") == 0)
-		return "image/jpeg";
-	else
-		return "text/plain";
-}
-
 // Must be synchronized over the log mutex
-void logRequest(struct request_bundle bundle, int thread_id, int requests_handled, const char* error) {
+void logRequest(struct request_bundle bundle, int thread_id, int requests_handled, int cache_hit, const char* error) {
 	fprintf(logfile,"[%d][%d][%d][%s][%s]",
 			thread_id,
 			requests_handled,
 			bundle.req->fd,
-			bundle.ent == NULL ? "MISS" : "HIT",
+			cache_hit == 0 ? "MISS" : "HIT",
 			bundle.req->filename);
 	if (error == NULL)
-		fprintf(logfile, "[%jd]\n", bundle.req->filesize);
+		fprintf(logfile, "[%jd]\n", bundle.ent->filesize);
 	else
 		fprintf(logfile, "[%s]\n", error);
 
 	fflush(logfile);
 }
 
-const char* process_request(struct request_bundle bundle) {
+const char* process_request(struct request_bundle bundle, int* cache_hit) {
 
 	fprintf(stderr, "process_request: Processing request on connection %d with filename %s\n", bundle.req->fd, bundle.req->filename);
 
@@ -887,10 +887,12 @@ const char* process_request(struct request_bundle bundle) {
 	char* error = NULL;
 
 	if (bundle.ent != NULL) {
+		*cache_hit = 1;
 		fprintf(stderr, "process_request: Cache hit\n");
 		data = bundle.ent->filedata;
 		filesize = bundle.ent->filesize;
 	} else {
+		*cache_hit = 0;
 		fprintf(stderr, "process_request: Cache miss, getting file\n");
 		data = getFile(filename);
 
@@ -901,8 +903,11 @@ const char* process_request(struct request_bundle bundle) {
 
 			if (filesize == -1)
 				error = "Error getting file size";
-			else
-				cache_putEntry(  createCacheEntry( filename, data, filesize )  );
+			else {
+				struct cache_entry* ent = createCacheEntry( filename, data, filesize );
+				cache_putEntry(ent);
+				bundle.ent = ent;
+			}
 
 			// At this point, the request filesize and entry filesize should match up... *fingers crossed*
 		}
@@ -941,25 +946,20 @@ void *dispatch_thread(void * ignored) {
 
 			fprintf(stderr, "dispatch_thread: Acting on file: %s\n", filename);
 
-			if ((filesize = getFileSize(filename)) == -1)
-				fprintf(stderr, "dispatch_thread: Error getting file size in dispatch thread\n");
-			else {
+			req = createRequest(fd, filename, filesize);
 
-				req = createRequest(fd, filename, filesize);
+			pthread_mutex_lock(&queue_mutex);
 
-				pthread_mutex_lock(&queue_mutex);
+			assert(queue_size <= max_queue_size);
 
-				assert(queue_size <= max_queue_size);
+			if (queue_size == max_queue_size)
+				pthread_cond_wait(&queue_put_cond, &queue_mutex);
 
-				if (queue_size == max_queue_size)
-					pthread_cond_wait(&queue_put_cond, &queue_mutex);
+			queue_putRequest(req);
 
-				queue_putRequest(req);
+			pthread_cond_signal(&queue_get_cond);
 
-				pthread_cond_signal(&queue_get_cond);
-
-				pthread_mutex_unlock(&queue_mutex);
-			}
+			pthread_mutex_unlock(&queue_mutex);
 		}
 	}
 
@@ -974,6 +974,7 @@ void *worker_thread(void * id) {
 	struct request_bundle bundle;
 	int thread_id = *((int*)id);
 	int requests_handled = 0;
+	int cache_hit;
 	const char* error;
 
 	fprintf(stderr, "worker_thread: Starting up\n");
@@ -1006,12 +1007,12 @@ void *worker_thread(void * id) {
 		pthread_cond_signal(&queue_put_cond);
 		pthread_mutex_unlock(&queue_mutex);
 
-		error = process_request(bundle);
+		error = process_request(bundle, &cache_hit);
 
 		++requests_handled;
 
 		pthread_mutex_lock(&log_mutex);
-		logRequest(bundle, thread_id, requests_handled, error);
+		logRequest(bundle, thread_id, requests_handled, cache_hit, error);
 		pthread_mutex_unlock(&log_mutex);
 
 		pthread_mutex_unlock(&cache_mutex); // bundle.ent should NOT be used after this point
@@ -1037,14 +1038,14 @@ void *worker_thread(void * id) {
 
 		pthread_mutex_unlock(&queue_mutex);
 
-		error = process_request(bundle);
+		error = process_request(bundle, &cache_hit);
 
 		pthread_mutex_unlock(&cache_mutex);
 
 		++requests_handled;
 
 		pthread_mutex_lock(&log_mutex);
-		logRequest(bundle, thread_id, requests_handled, error);
+		logRequest(bundle, thread_id, requests_handled, cache_hit, error);
 		pthread_mutex_unlock(&log_mutex);
 
 		destroyRequest(bundle.req);
