@@ -887,23 +887,23 @@ void logRequest(struct request_bundle bundle, int thread_id, int requests_handle
 	fprintf(stderr, "logRequest: Done logging request\n");
 }
 
-const char* process_request(struct request_bundle bundle, int* cache_hit) {
+const char* process_request(struct request_bundle* bundle, int* cache_hit) {
 
-	fprintf(stderr, "process_request: Processing request on connection %d with filename %s\n", bundle.req->fd, bundle.req->filename);
+	fprintf(stderr, "process_request: Processing request on connection %d with filename %s\n", bundle->req->fd, bundle->req->filename);
 
-	assert( bundle.req != NULL );
+	assert( bundle->req != NULL );
 
-	char* filename = bundle.req->filename;
+	char* filename = bundle->req->filename;
 	char* data;
 	intmax_t filesize;
 
 	char* error = NULL;
 
-	if (bundle.ent != NULL) {
+	if (bundle->ent != NULL) {
 		*cache_hit = 1;
 		fprintf(stderr, "process_request: Cache hit\n");
-		data = bundle.ent->filedata;
-		filesize = bundle.ent->filesize;
+		data = bundle->ent->filedata;
+		filesize = bundle->ent->filesize;
 	} else {
 		*cache_hit = 0;
 		fprintf(stderr, "process_request: Cache miss, getting file\n");
@@ -919,7 +919,7 @@ const char* process_request(struct request_bundle bundle, int* cache_hit) {
 			else {
 				struct cache_entry* ent = createCacheEntry( filename, data, filesize );
 				cache_putEntry(ent);
-				bundle.ent = ent;
+				bundle->ent = ent;
 			}
 
 			// At this point, the request filesize and entry filesize should match up... *fingers crossed*
@@ -931,10 +931,10 @@ const char* process_request(struct request_bundle bundle, int* cache_hit) {
 		char* contentType = getFileContentType(filename);
 		fprintf(stderr, "process_request: Calling return_result\n");
 		assert ( data != NULL );
-		return_result( bundle.req->fd, contentType, data, fs );
+		return_result( bundle->req->fd, contentType, data, fs );
 	}
 	else
-		return_error( bundle.req->fd, error );
+		return_error( bundle->req->fd, error );
 
 	return error;
 
@@ -1024,7 +1024,7 @@ void *worker_thread(void * id) {
 		pthread_cond_signal(&queue_put_cond);
 		pthread_mutex_unlock(&queue_mutex);
 
-		error = process_request(bundle, &cache_hit);
+		error = process_request(&bundle, &cache_hit);
 
 		fprintf(stderr, "worker_thread: Done processing request\n");
 
