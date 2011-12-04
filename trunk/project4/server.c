@@ -925,9 +925,8 @@ const char* process_request(struct request_bundle bundle, int* cache_hit) {
 
 void *dispatch_thread(void * ignored) {
 	int fd;
-	char filename_buffer[1024];
+	char filename_buffer[FILENAME_SIZE + 1];
 	char* filename;
-	intmax_t filesize;
 	struct request* req;
 
 	fprintf(stderr, "dispatch_thread: Starting up\n");
@@ -946,7 +945,7 @@ void *dispatch_thread(void * ignored) {
 
 			fprintf(stderr, "dispatch_thread: Acting on file: %s\n", filename);
 
-			req = createRequest(fd, filename, filesize);
+			req = createRequest(fd, filename);
 
 			pthread_mutex_lock(&queue_mutex);
 
