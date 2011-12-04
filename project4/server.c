@@ -868,6 +868,7 @@ struct request_bundle getCachedRequest() {
 
 // Must be synchronized over the log mutex
 void logRequest(struct request_bundle bundle, int thread_id, int requests_handled, int cache_hit, const char* error) {
+	fprintf(stderr, "logRequest: Logging request\n");
 	fprintf(logfile,"[%d][%d][%d][%s][%s]",
 			thread_id,
 			requests_handled,
