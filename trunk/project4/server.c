@@ -9,6 +9,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <stdint.h>
+
 #include "util.h"
 
 
@@ -150,7 +152,7 @@ pthread_mutex_t prefetch_mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t prefetch_get_cond = PTHREAD_COND_INITIALIZER;
 
 struct cache_entry *cache_sentinel;
-struct cache_entry *cache_hashtable; // Static array of size max_cache_size
+struct cache_entry **cache_hashtable; // Static array of size max_cache_size
 int cache_size;
 int max_cache_size; // Set by user, will not exceed MAX_CACHE_SIZE
 pthread_mutex_t cache_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -572,7 +574,7 @@ struct request_bundle getCachedRequest() {
 	}
 
 	if (req == NULL)
-		req = queue_getRequest();
+		req = q_shift();
 
 	struct request_bundle bundle = { req, ent };
 
@@ -618,7 +620,7 @@ intmax_t getFileSize(const char* const filename) {
 		return -1;
 }
 
-const char* getFileContentType(const char* const filename) {
+char* getFileContentType(const char* const filename) {
 	const char* extension = strrchr(filename, '.');
 	if (extension == NULL)
 		return "text/plain";
@@ -657,7 +659,7 @@ const char* process_request(struct request_bundle bundle) {
 	char* data;
 	intmax_t filesize;
 
-	const char* error = NULL;
+	char* error = NULL;
 
 	if (bundle.ent != NULL) {
 		data = bundle.ent->filedata;
@@ -684,14 +686,14 @@ const char* process_request(struct request_bundle bundle) {
 }
 
 
-void *dispatch_thread(void *ignored) {
+void *dispatch_thread(void * ignored) {
 	int fd;
 	char filename[1024];
 	intmax_t filesize;
 	struct request* req;
 
 	while ( (fd = accept_connection()) >= 0 ) {
-		if (get_request(fd, &filename) == 0) {
+		if (get_request(fd, filename) == 0) {
 			if ((filesize = getFilesize(filename)) == -1)
 				fprintf(stderr, "Error getting file size in dispatch thread\n");
 			else {
@@ -702,7 +704,7 @@ void *dispatch_thread(void *ignored) {
 				assert(queue_size <= max_queue_size);
 
 				if (queue_size == max_queue_size)
-					pthread_cond_wait(&queue_put_cond);
+					pthread_cond_wait(&queue_put_cond, &queue_mutex);
 
 				queue_putRequest(req);
 
@@ -712,15 +714,13 @@ void *dispatch_thread(void *ignored) {
 			}
 		}
 	}
-
-	pthread_exit();
 }
 
 struct request_bundle (*getRequest)();
 
-void *worker_thread(void *ignored) {
+void *worker_thread(void * id) {
 	struct request_bundle bundle;
-	int thread_id = pthread_self();
+	int thread_id = *((int*)id);
 	int requests_handled = 0;
 	const char* error;
 
@@ -739,7 +739,7 @@ void *worker_thread(void *ignored) {
 		pthread_cond_signal(&queue_put_cond);
 		pthread_mutex_unlock(&queue_mutex);
 
-		error = processRequest(bundle);
+		error = process_request(bundle);
 
 		++requests_handled;
 
@@ -768,7 +768,7 @@ void *worker_thread(void *ignored) {
 
 		pthread_mutex_unlock(&queue_mutex);
 
-		error = processRequest(bundle);
+		error = process_request(bundle);
 
 		pthread_mutex_unlock(&cache_mutex);
 
@@ -780,8 +780,6 @@ void *worker_thread(void *ignored) {
 
 		destroyRequest(bundle.req);
 	}
-
-	pthread_exit();
 }
 
 void *prefetch_thread(void *ignored) {
@@ -797,7 +795,7 @@ void *prefetch_thread(void *ignored) {
 		assert ( prefetch_size >= 0 );
 
 		if (prefetch_size == 0)
-			pthread_cond_wait(&prefetch_get_cond);
+			pthread_cond_wait(&prefetch_get_cond, &prefetch_mutex);
 
 		req = prefetch_getRequest();
 		assert ( req != NULL );
@@ -815,8 +813,6 @@ void *prefetch_thread(void *ignored) {
 
 		destroyRequest(req);
 	}
-
-	pthread_exit();
 }
 
 
@@ -917,13 +913,18 @@ int main(int argc, char *argv[]) {
     pthread_t worker_threads[num_workers];
     pthread_t prefetch_threads[num_prefetch];
 
+    int worker_thread_ids[num_workers];
     int i;
+
+    for (i = 0; i < num_workers; ++i)
+    	worker_thread_ids[i] = i + 1;
+
     for (i = 0; i < num_dispatch; ++i)
     	pthread_create(&dispatch_threads[i], NULL, &dispatch_thread, NULL);
     for (i = 0; i < num_workers; ++i)
-    	pthread_create(&worker_threads[i], NULL, &worker_thread, NULL);
+    	pthread_create(&worker_threads[i], NULL, &worker_thread, (void*)&worker_thread_ids[i]);
     for (i = 0; i < num_prefetch; ++i)
-    	pthread_create(&prefetch_threads[i], NULL, &prefetch_threads, NULL);
+    	pthread_create(&prefetch_threads[i], NULL, &prefetch_thread, NULL);
 
     for (i = 0; i < num_dispatch; ++i)
     	pthread_join(dispatch_threads[i], NULL);
