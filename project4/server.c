@@ -875,6 +875,8 @@ void logRequest(struct request_bundle bundle, int thread_id, int requests_handle
 			bundle.req->fd,
 			cache_hit == 0 ? "MISS" : "HIT",
 			bundle.req->filename);
+	assert (bundle.ent != NULL);
+
 	if (error == NULL)
 		fprintf(logfile, "[%jd]\n", bundle.ent->filesize);
 	else
