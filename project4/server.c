@@ -921,6 +921,7 @@ const char* process_request(struct request_bundle bundle, int* cache_hit) {
 		int fs = filesize;
 		char* contentType = getFileContentType(filename);
 		fprintf(stderr, "process_request: Calling return_result\n");
+		assert ( data != NULL );
 		return_result( bundle.req->fd, contentType, data, fs );
 	}
 	else
