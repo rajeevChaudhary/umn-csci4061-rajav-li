@@ -1,0 +1,25 @@
+/* csci4061 F2011 Assignment 4
+ * section: 3
+ * login: rajav003
+ * date: 12/04/11
+ * name: Jonathan Rajavuori, Ou Li
+ * id: 3438942, 4358557 */
+
+To compile, type 'make' in the source directory. This will make the default target, web_server_http. The files server.c, util-http.o and guess.o must be present in the source directory. The binary 'web_server_http' will be produced in the source directory.
+
+To use the program from the shell, type './web_server_http <port> <path> <num_dispatch> <num_workers> <num_prefetch> <qlen> <mode> <cache_entries>' in the same directory as the 'web_server_http' binary, where:
+<port>: The port number to run the server on (Must be in 1025 - 65535)
+<path>: The relative or absolute path to the directory to use as the web tree root
+<num_dispatch>: The number of dispatch threads to start
+<num_workers>: The number of worker threads to start
+<num_prefetch>: The number of prefetch threads to start
+<qlen>: The maximum length of the request queue (Cannot exceed 100)
+<mode>: One of three integer values: 0 for First Come First Serve mode, 1 for Cached Requests First mode, or 2 for Smallest File First mode
+<cache_entries>: The maximum length of the cache (Cannot exceed 100)
+
+After running web_server_http, connect to the specified port with a path request to the desired file. For instance, if you are on the same machine and want the file "text/plain/0.txt" from the server on port 9000, request the URL 'http://127.0.0.1:9000/text/plain/0.txt'.
+
+This simple web server demonstrates the use of POSIX multithreading, as well as the associated tools of mutex locks and condition variables for synchronizing multiple threads.
+
+
+(Project developed jointly; could not say specifically who did what as we worked together)
