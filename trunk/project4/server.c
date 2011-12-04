@@ -1057,7 +1057,7 @@ void *worker_thread(void * id) {
 
 		pthread_mutex_unlock(&queue_mutex);
 
-		error = process_request(bundle, &cache_hit);
+		error = process_request(&bundle, &cache_hit);
 
 		pthread_mutex_unlock(&cache_mutex);
 
