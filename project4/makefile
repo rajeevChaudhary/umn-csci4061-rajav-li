@@ -8,7 +8,7 @@ web_server_http: server.o util-http.o guess.o
 	${CC} ${LDFLAGS} -o web_server_http server.o util-http.o guess.o
 
 web_server_http_mac: server.o util-http_MAC.o guess.o
-	${CC} ${LDFLAGS} -o web_server_http_mac server.o util-http_MAC.o guess.o
+	${CC} ${LDFLAGS} -o web_server_http_mac server.o util-http_MAC.o
 
 server.o: server.c
 

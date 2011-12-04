@@ -40,7 +40,7 @@ int global_exit = 0;
 
 
 
-int guess_next(char *filename, char *guessed);
+//int guess_next(char *filename, char *guessed);
 
 
 
@@ -588,7 +588,8 @@ struct request_bundle getCachedRequest() {
 
 
 // Reads in the given file and returns a pointer to the data in memory or NULL on failure
-char * getFile(const char* const filename) {
+char * getFile(const char* filename) {
+
 	FILE* file = fopen(filename, "rb");
 	intmax_t fileLength;
 
@@ -611,11 +612,12 @@ char * getFile(const char* const filename) {
 	return data;
 }
 
-intmax_t getFileSize(const char* const filename) {
-	static struct stat stat_buf;
+intmax_t getFileSize(const char* filename) {
+
+	struct stat stat_buf;
 
 	if ( stat(filename, &stat_buf) == 0 )
-		return (intmax_t)stat_buf.st_size;
+		return stat_buf.st_size;
 	else
 		return -1;
 }
@@ -688,15 +690,27 @@ const char* process_request(struct request_bundle bundle) {
 
 void *dispatch_thread(void * ignored) {
 	int fd;
-	char filename[1024];
+	char filename_buffer[1024];
+	char* filename;
 	intmax_t filesize;
 	struct request* req;
 
 	while ( (fd = accept_connection()) >= 0 ) {
-		if (get_request(fd, filename) == 0) {
+		fprintf(stderr,"Got connection: %d\n", fd);
+		if (get_request(fd, filename_buffer) == 0) {
+			fprintf(stderr, "Got request for: %s\n", filename_buffer);
+
+			if (filename_buffer[0] == '/')
+				filename = &filename_buffer[1];
+			else
+				filename = &filename_buffer[0];
+
+			fprintf(stderr, "Acting on file: %s\n", filename);
+
 			if ((filesize = getFileSize(filename)) == -1)
 				fprintf(stderr, "Error getting file size in dispatch thread\n");
 			else {
+
 				req = createRequest(fd, filename, filesize);
 
 				pthread_mutex_lock(&queue_mutex);
@@ -802,14 +816,16 @@ void *prefetch_thread(void *ignored) {
 
 		pthread_mutex_unlock(&prefetch_mutex);
 
-		if ( guess_next( req->filename, guessed_filename ) == 0 ) {
+		//guess_next
+		/*
+		if ( nextguess( req->filename, guessed_filename ) == 0 ) {
 			data = getFile(guessed_filename);
 			filesize = getFileSize(guessed_filename);
 
 			pthread_mutex_lock(&cache_mutex);
 			cache_putEntry(  createCacheEntry( guessed_filename, data, filesize )  );
 			pthread_mutex_unlock(&cache_mutex);
-		}
+		}*/
 
 		destroyRequest(req);
 	}
