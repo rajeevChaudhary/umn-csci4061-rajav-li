@@ -881,6 +881,8 @@ void logRequest(struct request_bundle bundle, int thread_id, int requests_handle
 		fprintf(logfile, "[%s]\n", error);
 
 	fflush(logfile);
+
+	fprintf(stderr, "logRequest: Done logging request\n");
 }
 
 const char* process_request(struct request_bundle bundle, int* cache_hit) {
