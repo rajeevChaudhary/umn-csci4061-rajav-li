@@ -60,8 +60,10 @@ addEntry(fn, data): Adds new cache entry with filename fn and file data data to 
       HASHED-LIST-SHIFT(cache)
    HASHED-LIST-ADD(cache, ent)
 
-search(fn): Returns a pointer to the cache entry matching filename fn, or null if no such entry exists in the cache
-   return HASHED-LIST-SEARCH(cache, fn)
+search(fn): Returns a copy of the cache entry matching filename fn, or null if no such entry exists in the cache
+   make new cache entry 'ent'
+   ent = HASHED-LIST-SEARCH(cache, fn)
+   return ent
 
 
 
@@ -102,10 +104,7 @@ processRequest(req, ent):
       ent = cache.addEntry(req.filename, data)
    determine content type of data
    use return_result or return_error appropriately
-   log request
-   if prefetch not full
-      prefetch.addRequest(req)
-      increment prefetch extract semaphore
+
 
 
 
@@ -114,60 +113,68 @@ processRequest(req, ent):
 dispatch:
    make integer fd
    make string filename of size 1024
+   make integer filesize
    while fd = accept_connection() is nonnegative
       if get_request(fd, &filename) is 0
-         decrement or block queue insert semaphore
-         queue.addRequest(fd, filename)
-         increment queue extract semaphore
+         filesize = filename.filesize
+         lock queue mutex
+         check if queue is full
+            if full, wait on queue put condition variable
+         make new request req = (fd, filename, filesize)
+         queue.putRequest(req)
+         signal queue get condition variable
+         unlock queue mutex
 
-//! Workers should only exit once the request queue is empty
 
+*fetchRequest set appropriately according to mode
 
-FCFS worker:
-   make request req
-   make cache entry ent
+Worker:
    while global_exit is false
-      decrement or block queue extract semaphore
-      req = queue.fetchRequest()
-      increment queue insert semaphore
-
-      ent = cache.search(req.filename)
-
+      lock queue mutex
+      if queue is empty
+         wait on queue get condition variable
+      lock cache mutex
+      (req, ent) = queue.*getRequest()
+      signal queue put condition variable
+      unlock queue mutex
       processRequest(req, ent)
-
-CRF worker:
-   make request req
-   make cache entry ent
-   while global_exit is false
-      decrement or block queue extract semaphore
-      (req, ent) = fetchCachedRequest()
-      increment queue insert semaphore
-
+      unlock cache mutex
+      lock log mutex
+      log request
+      unlock log mutex
+      if prefetch not full
+         lock prefetch mutex
+         prefetch.addRequest(req)
+         signal prefetch get condition variable
+         unlock prefetch mutex
+   while request queue not empty
+      lock queue mutex
+      lock cache mutex
+      (req, ent) = queue.*getRequest() // no signal to queue put since queue is being emptied
+      unlock queue mutex
       processRequest(req, ent)
-
-SFF worker:
-   make request req
-   make cache entry ent
-   while global_exit is false
-      decrement or block queue extract semaphore
-      req = queue.fetchSmallRequest()
-      increment queue insert semaphore
-
-      ent = cache.search(req.filename)
-
-      processRequest(req, ent)
-
-
-//! Upon global exit, prefetch should probably just exit right away
-
+      unlock cache mutex
+      lock log mutex
+      log request
+      unlock log mutex
+      if prefetch not full
+         lock prefetch mutex
+         prefetch.addRequest(req)
+         signal prefetch get condition variable
+         unlock prefetch mutex
 
 prefetch:
-   make new string guess_filename
+   make new string guessed_filename
    while global_exit is false
-      decrement or block prefetch extract semaphore
-      guess_filename = nextguess(prefetch.fetchRequest())
-      if guess_filename is not null
-         make new data = guess_filename.filedata
-         cache.addEntry(guess_filename, data)
+      lock prefetch mutex
+      if prefetch is empty
+         wait on prefetch condition variable
+      guessed_filename = guess_next( prefetch.getRequest() )
+      unlock prefetch mutex
+      if guess_next was successful
+         make new data = guessed_filename.filedata
+         lock cache mutex
+         cache.putEntry(guessed_filename, data)
+         unlock cache mutex
 
 
