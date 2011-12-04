@@ -694,7 +694,7 @@ void *dispatch_thread(void * ignored) {
 
 	while ( (fd = accept_connection()) >= 0 ) {
 		if (get_request(fd, filename) == 0) {
-			if ((filesize = getFilesize(filename)) == -1)
+			if ((filesize = getFileSize(filename)) == -1)
 				fprintf(stderr, "Error getting file size in dispatch thread\n");
 			else {
 				req = createRequest(fd, filename, filesize);
