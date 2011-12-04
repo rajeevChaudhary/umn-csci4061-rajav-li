@@ -34,7 +34,6 @@
 
 
 
-
 enum mode {
 	FCFS = 0,
 	CRF = 1,
@@ -48,10 +47,8 @@ pthread_mutex_t log_mutex = PTHREAD_MUTEX_INITIALIZER;
 // It signifies that all other threads should finish their work so the server can exit cleanly
 int global_exit = 0;
 
-
-
-
-//int guess_next(char *filename, char *guessed);
+// From guess.o
+int guess_next(char *filename, char *guessed);
 
 
 
@@ -280,7 +277,10 @@ void destroyCacheEntry(struct cache_entry* ent) {
 
 
 
-// LIST-ADD, LIST-REMOVE, and LIST-SHIFT defined on the queue
+//////// Internal linked list operations on the request queue
+
+//SUMMARY
+// Add request 'r' to the end of the queue
 void q_add(struct request* r) {
 
 	fprintf(stderr, "q_add: Called\n");
@@ -296,6 +296,8 @@ void q_add(struct request* r) {
 
 }
 
+//SUMMARY
+// Remove request 'r' from the queue
 void q_remove(struct request* r) {
 
 	fprintf(stderr, "q_remove: Called\n");
@@ -311,6 +313,8 @@ void q_remove(struct request* r) {
 
 }
 
+//SUMMARY
+// Return the first request added to the queue or NULL if the queue is empty
 struct request* q_first() {
 
 	fprintf(stderr, "q_first: Called\n");
@@ -326,6 +330,8 @@ struct request* q_first() {
 
 }
 
+//SUMMARY
+// Return the request following request 'r' in the queue or NULL if it is the last request
 struct request* q_nextOf(struct request* r) {
 
 	fprintf(stderr, "q_nextOf: Called\n");
@@ -341,6 +347,8 @@ struct request* q_nextOf(struct request* r) {
 
 }
 
+//SUMMARY
+// Return the first request in the queue after removing it from the queue, or NULL if the queue is empty
 struct request* q_shift() {
 
 	fprintf(stderr, "q_shift: Called\n");
@@ -358,7 +366,10 @@ struct request* q_shift() {
 
 
 
-// LIST-ADD, LIST-REMOVE, and LIST-SHIFT defined on the prefetch queue
+//////// Internal linked list operations on the prefetch queue
+
+//SUMMARY
+// Add request 'r' to the end of the queue
 void p_add(struct request* r) {
 
 	fprintf(stderr, "p_add: Called\n");
@@ -374,6 +385,8 @@ void p_add(struct request* r) {
 
 }
 
+//SUMMARY
+// Remove request 'r' from the queue
 void p_remove(struct request* r) {
 
 	fprintf(stderr, "p_remove: Called\n");
@@ -389,6 +402,8 @@ void p_remove(struct request* r) {
 
 }
 
+//SUMMARY
+// Return the first request added to the queue or NULL if the queue is empty
 struct request* p_first() {
 
 	fprintf(stderr, "p_first: Called\n");
@@ -404,6 +419,8 @@ struct request* p_first() {
 
 }
 
+//SUMMARY
+// Return the request following request 'r' in the queue or NULL if it is the last request
 struct request* p_nextOf(struct request* r) {
 
 	fprintf(stderr, "p_nextOf: Called\n");
@@ -419,6 +436,8 @@ struct request* p_nextOf(struct request* r) {
 
 }
 
+//SUMMARY
+// Return the first request in the queue after removing it from the queue, or NULL if the queue is empty
 struct request* p_shift() {
 
 	fprintf(stderr, "p_shift: Called\n");
@@ -437,7 +456,10 @@ struct request* p_shift() {
 
 
 
-//HASHED-LIST functions for the cache
+//////// Internal hashed linked list operations on the cache
+
+//SUMMARY
+// Insert cache entry 'e' into the hash table, accounting for collisions
 void hash_add(struct cache_entry* e) {
 
 	fprintf(stderr, "hash_add: Called\n");
@@ -458,6 +480,8 @@ void hash_add(struct cache_entry* e) {
 	}
 }
 
+//SUMMARY
+// Remove cache entry 'e' from the hash table
 void hash_remove(struct cache_entry* e) {
 
 	if (e->prev_collision == NULL) { // This is the first entry in the collision list and the one referenced by the array index
@@ -477,16 +501,30 @@ void hash_remove(struct cache_entry* e) {
 
 }
 
+//SUMMARY
+// Return the cache entry with filename key 'fn' or NULL if no such entry exists
+//NOTES
+// This key will uniquely map to one cache entry due to the program flow --
+// If this search keys to a cache entry and returns non-NULL, then no cache entry will be added in that line of execution
 struct cache_entry* hash_search(const char* const fn) {
 
 	int hash = MurmurHash2(fn, FILENAME_SIZE, HASH_SEED) % max_cache_size;
 
 	fprintf(stderr, "hash_search: Hash generated for filename %s: %d\n", fn, hash);
 
+	struct cache_entry* ent = cache_hashtable[hash];
+
+	while (ent != NULL && strcmp(ent->filename, fn) != 0)
+		ent = ent->next_collision;
+
 	return cache_hashtable[hash];
 
 }
 
+//SUMMARY
+// Add entry 'e' to the end of the cache
+//NOTES
+// This function will call hash_add to add the same entry to the hash table
 void c_add(struct cache_entry* e) {
 
 	fprintf(stderr, "c_add: Called\n");
@@ -502,6 +540,10 @@ void c_add(struct cache_entry* e) {
 
 }
 
+//SUMMARY
+// Remove entry 'e' from the cache
+//NOTES
+// This function will call hash_remove to remove the same entry from the hash table
 void c_remove(struct cache_entry* e) {
 
 	fprintf(stderr, "c_remove: Called\n");
@@ -519,6 +561,8 @@ void c_remove(struct cache_entry* e) {
 
 }
 
+//SUMMARY
+// Return the first entry add to the cache or NULL if the cache is empty
 struct cache_entry* c_first() {
 
 	fprintf(stderr, "c_first: Called\n");
@@ -534,6 +578,11 @@ struct cache_entry* c_first() {
 
 }
 
+//SUMMARY
+// Return the entry following 'e' in the cache or NULL if it is the last entry
+//NOTES
+// This function is never called in this code, since there is no need to iterate over the cache.
+// It is included for completeness.
 struct cache_entry* c_nextOf(struct cache_entry* e) {
 
 	fprintf(stderr, "c_nextOf: Called\n");
@@ -549,8 +598,8 @@ struct cache_entry* c_nextOf(struct cache_entry* e) {
 
 }
 
-// No nextOf() operation, we have no need to iterate over the cache
-
+//SUMMARY
+// Return the first request in the cache after removing it from the cache, or NULL if the cache is empty
 struct cache_entry* c_shift() {
 
 	fprintf(stderr, "c_shift: Called\n");
@@ -564,26 +613,15 @@ struct cache_entry* c_shift() {
 
 }
 
-/*
-
-struct cache_entry* hash_search(const char* const fn) {
-
-	struct cache_entry* ent = c_first();
-
-	if (ent != NULL) {
-		while ( (ent = c_nextOf(ent)) != NULL ) {
-			if (strcmp(ent->filename, fn) == 0) {
-				break;
-			}
-		}
-	}
-
-	return ent;
-
-}*/
 
 
 
+
+//////// Interface operations on the request queue, prefetch queue, and the cache
+
+//SUMMARY
+// Adds the cache entry 'ent' to the end
+//NOTES
 // Must be locked over the cache - can be unlocked immediately following the call
 // No other synchronization needed, since old entries will automatically be displaced once cache is full
 void cache_putEntry(struct cache_entry* ent) {
@@ -603,8 +641,11 @@ void cache_putEntry(struct cache_entry* ent) {
 
 }
 
-// Returns a pointer to the first cache entry matching the given filename
-// Returns NULL if no such entry exists
+//SUMMARY
+// Searches the cache for entry matching filename 'fn'
+//RETURNS
+// A pointer to the first cache entry matching the given filename or NULL if no such entry exists
+//NOTES
 // Must be locked over the cache INCLUDING ALL USAGE OF THE RETURNED CACHE ENTRY
 // The cache entry REMAINS IN THE CACHE
 // The returned cache entry should NOT be destroyed upon falling out of the caller's context
@@ -615,9 +656,6 @@ struct cache_entry* cache_search(const char* const fn) {
 	return hash_search(fn);
 
 }
-
-
-
 
 
 // Must be locked over the queue - can be unlocked immediately following the call
@@ -755,7 +793,10 @@ struct request_bundle getCachedRequest() {
 
 
 
-// Reads in the given file and returns a pointer to the data in memory or NULL on failure
+//SUMMARY
+// Reads in file at path 'filename'
+//RETURNS
+// A char (bytewise) pointer to the data in memory or NULL on failure
 char * getFile(const char* filename) {
 
 	fprintf(stderr, "getFile: Getting file %s\n", filename);
@@ -853,13 +894,18 @@ const char* process_request(struct request_bundle bundle) {
 		fprintf(stderr, "process_request: Cache miss, getting file\n");
 		data = getFile(filename);
 
-		filesize = getFileSize(filename);
+		if (data == NULL)
+			error = "Error reading file";
+		else {
+			filesize = getFileSize(filename);
 
-		if (filesize == -1)
-			error = "Error getting file size";
+			if (filesize == -1)
+				error = "Error getting file size";
+			else
+				cache_putEntry(  createCacheEntry( filename, data, filesize )  );
 
-		cache_putEntry(  createCacheEntry( filename, data, filesize )  );
-		bundle.req->filesize = filesize;
+			// At this point, the request filesize and entry filesize should match up... *fingers crossed*
+		}
 	}
 
 	if (error == NULL)
@@ -918,6 +964,8 @@ void *dispatch_thread(void * ignored) {
 	}
 
 	fprintf(stderr, "dispatch_thread: Shutting down\n");
+
+	return NULL;
 }
 
 struct request_bundle (*getRequest)() = NULL;
@@ -1003,6 +1051,8 @@ void *worker_thread(void * id) {
 	}
 
 	fprintf(stderr, "worker_thread: Shutting down\n");
+
+	return NULL;
 }
 
 void *prefetch_thread(void *ignored) {
@@ -1029,21 +1079,21 @@ void *prefetch_thread(void *ignored) {
 
 		pthread_mutex_unlock(&prefetch_mutex);
 
-		//guess_next
-		/*
-		if ( nextguess( req->filename, guessed_filename ) == 0 ) {
+		if ( guess_next( req->filename, guessed_filename ) == 0 ) {
 			data = getFile(guessed_filename);
 			filesize = getFileSize(guessed_filename);
 
 			pthread_mutex_lock(&cache_mutex);
 			cache_putEntry(  createCacheEntry( guessed_filename, data, filesize )  );
 			pthread_mutex_unlock(&cache_mutex);
-		}*/
+		}
 
 		destroyRequest(req);
 	}
 
 	fprintf(stderr, "prefetch_thread: Shutting down\n");
+
+	return NULL;
 }
 
 
