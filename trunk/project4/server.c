@@ -661,23 +661,27 @@ intmax_t getFileSize(const char* filename) {
 		return -1;
 }
 
+char content_type_return_val[50];
+
 char* getFileContentType(const char* const filename) {
 	fprintf(stderr, "getFileContentType: Detecting content type of file %s\n", filename);
 
 	const char* extension = strrchr(filename, '.');
 	if (extension == NULL)
-		return "text/plain";
+		strcpy(content_type_return_val, "text/plain");
 
 	++extension;
 
 	if (strcmp(extension, "htm") == 0 || strcmp(extension, "html") == 0)
-		return "text/html";
+		strcpy(content_type_return_val, "text/html");
 	else if (strcmp(extension, "gif") == 0)
-		return "image/gif";
+		strcpy(content_type_return_val, "image/gif");
 	else if (strcmp(extension, "jpg") == 0 || strcmp(extension, "jpeg") == 0)
-		return "image/jpeg";
+		strcpy(content_type_return_val, "image/jpeg");
 	else
-		return "text/plain";
+		strcpy(content_type_return_val, "text/plain");
+
+	return content_type_return_val;
 }
 
 
