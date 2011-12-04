@@ -917,8 +917,11 @@ const char* process_request(struct request_bundle bundle, int* cache_hit) {
 		}
 	}
 
-	if (error == NULL)
-		return_result( bundle.req->fd, getFileContentType(filename), data, (int)filesize );
+	if (error == NULL) {
+		char* contentType = getFileContentType(filename);
+		fprintf(stderr, "process_request: Calling return_result\n");
+		return_result( bundle.req->fd, contentType, data, (int)filesize );
+	}
 	else
 		return_error( bundle.req->fd, error );
 
