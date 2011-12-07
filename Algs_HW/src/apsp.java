@@ -50,14 +50,14 @@ public class apsp {
 				final String delimiter = "[,]";
 				String[] adjList = currentLine.split(delimiter);
 				
-				if (adjList.length % 2 != 0) {
+				if (adjList.length > 1 && ((adjList.length % 1) != 0)) {
 					System.err.println("Error in graph file format: Adjacency list has vertex with no weight");
 					System.exit(1);
 				}
 				
-				for (int j = 0; j < adjList.length; j += 2) {
-					Edge e = new Edge(vertices[i], vertices[new Integer(adjList[j]) - 1]);
-					e.weight = new Integer(adjList[j+1]);
+				for (int j = 1; j < adjList.length; j += 2) {
+					Edge e = new Edge(vertices[i], vertices[new Integer(adjList[j-1]) - 1]);
+					e.weight = new Integer(adjList[j]);
 					G.add(e);
 				}
 			}
