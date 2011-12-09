@@ -1,4 +1,10 @@
-/*CSci4041 Fall’11 Programming Assignment 2 *section: 5 *login: rajav003 *date: 12/09/11 *name: Jonathan Rajavuori *id: 3438942 *algorithm: Johnson's*/
+/*CSci4041 Fall’11 Programming Assignment 2
+ *section: 5
+ *login: rajav003
+ *date: 12/09/11
+ *name: Jonathan Rajavuori
+ *id: 3438942
+ *algorithm: Johnson's*/
 
 To compile this program, do `ant' from the top-level directory (the one containing src/).
 
@@ -9,3 +15,4 @@ This program reads in the directed, weighted graph given in adjacency list forma
 The input graph file should have one adjacency list on each line, with the line number corresponding to the index of the vertex. Each list should alternate adjacent vertex indices and edge weights, with each entry separated by a comma (,). For instance, if a graph has edges (2, 5) and (2, 1) with weights -4 and 1 respectively, line 2 of the graph file could be:
 
 5,-4,1,1
+
