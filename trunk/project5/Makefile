@@ -1,5 +1,5 @@
 CC = gcc
-FLAGS = -Wall -g
+FLAGS = -Wall
 
 all: web_server_http
 

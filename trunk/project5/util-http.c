@@ -10,8 +10,12 @@
 #include <sys/uio.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <strings.h>
+#include <pthread.h>
+
+pthread_mutex_t accept_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 
 int global_socket = -1;
@@ -20,22 +24,33 @@ void init(int port) {
     
     global_socket = socket (AF_INET, SOCK_STREAM, 0);
     
+    if ( global_socket < 0 )
+        exit(1);
+    
     struct sockaddr_in addr;
+    
+    bzero(&addr, sizeof(struct sockaddr_in));
+    
     addr.sin_family = AF_INET; //IPv4
     addr.sin_addr.s_addr = INADDR_ANY;
     addr.sin_port = htons(port);
-    bind (global_socket, (struct sockaddr*)&addr, sizeof(addr));
     
-    //int enable = 1;
-    //setsockopt (global_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&enable, sizeof(int));
+    if ( bind(global_socket, (struct sockaddr*)&addr, sizeof(addr)) < 0 )
+        exit(1);
     
-    listen(global_socket, 5);
+    int enable = 1;
+    setsockopt (global_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&enable, sizeof(int));
     
-    printf("init called, global_socket = %d", global_socket);
+    if ( listen(global_socket, 5) < 0 )
+        exit(1);
+    
+    printf("init called, global_socket = %d\n", global_socket);
     
 }
 
 int accept_connection(void) {
+    
+    pthread_mutex_lock(&accept_mutex);
     
     if (global_socket == -1)
         return -1;
@@ -43,13 +58,14 @@ int accept_connection(void) {
     struct sockaddr_in client_addr;
     socklen_t addr_len = sizeof(struct sockaddr);
     
-    return accept(global_socket, (struct sockaddr*)&client_addr, &addr_len);  
+    int ret = accept(global_socket, (struct sockaddr*)&client_addr, &addr_len);  
     
+    pthread_mutex_unlock(&accept_mutex);
+    
+    return ret;
 }
 
 int get_request(int fd, char *filename) {
-    
-    printf ("get_request called");
     
     static char buffer[REQ_BUFFER_LEN];
     char* head = buffer;
@@ -106,20 +122,40 @@ int get_request(int fd, char *filename) {
         
         strncpy(filename, head, tail-head);
         filename[tail-head+1] = '\0';
-               
-        //fprintf(stderr, "Filename: %s", filename);
     }
     
     return 0;
 }
 
 int return_result(int fd, char *content_type, char *buf, int numbytes) {
-    /* Nothing */
+    
+    
+    FILE* stream = fdopen(fd, "w");
+    
+    fprintf(stderr, "HTTP/1.1 200 OK\nContent-Type: %s\nContent-Length: %d\nConnection: Close\n\n", content_type, numbytes);
+    fprintf(stream, "HTTP/1.1 200 OK\nContent-Type: %s\nContent-Length: %d\nConnection: Close\n\n", content_type, numbytes);
+    fflush(stream);
+    
+    if (write(fd, buf, numbytes) < 0)
+        fprintf(stderr, "Write to socket failed\n");
+    
+    fclose(stream);
+    
     return 0;
 }
 
 int return_error(int fd, char *buf) {
-    /* Nothing */
+    
+    FILE* stream = fdopen(fd, "w");
+    
+    fprintf(stream, "HTTP/1.1 401 Not Found\nContent-Type: text/html\nContent-Length: %zu\nConnection: Close\n\n", strlen(buf));
+    fflush(stream);
+    
+    if (write(fd, buf, strlen(buf)) < 0)
+        fprintf(stderr, "Write to socket failed\n");
+    
+    fclose(stream);
+    
     return 0;
 }
 
