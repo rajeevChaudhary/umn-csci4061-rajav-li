@@ -136,8 +136,9 @@ int get_request(int fd, char *filename) {
     
     if (fgets(filename, 1024, stdin) == NULL)
         return -1;
-    else
+    else {
         return 0;
+   }
 }
 
 int return_result(int fd, char *content_type, char *buf, int numbytes) {
