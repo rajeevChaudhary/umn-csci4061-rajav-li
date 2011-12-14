@@ -2,18 +2,6 @@
 #define _UTIL_H
 
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <sys/uio.h>
-#include <unistd.h>
-#include <stdio.h>
-
-#include <strings.h>
-
-
 /**********************************************
  * init
  - port is the number of the port you want the server to be
@@ -90,15 +78,5 @@ int return_result(int fd, char *content_type, char *buf, int numbytes);
  - returns 0 on success, nonzero on failure.
  ************************************************/
 int return_error(int fd, char *buf);
-
-/**********************************************
- * nextguess
- - returns the guess for the next file based upon the current request
- - parameters:
- - filename is a pointer to the location of the current filename
- - guessed is a pointer to the location of the guessed filename
- - returns 0 on success, nonzero on failure.
- ************************************************/
-int nextguess(char *filename, char *guessed);
 
 #endif /* _UTIL_H */

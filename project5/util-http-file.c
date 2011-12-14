@@ -172,8 +172,3 @@ int return_error(int fd, char *buf) {
     */
     return 0;
 }
-
-int nextguess(char *filename, char *guessed) {
-    /* Nothing */
-    return 0;
-}

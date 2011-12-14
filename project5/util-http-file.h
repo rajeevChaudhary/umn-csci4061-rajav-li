@@ -91,14 +91,4 @@ int return_result(int fd, char *content_type, char *buf, int numbytes);
  ************************************************/
 int return_error(int fd, char *buf);
 
-/**********************************************
- * nextguess
- - returns the guess for the next file based upon the current request
- - parameters:
- - filename is a pointer to the location of the current filename
- - guessed is a pointer to the location of the guessed filename
- - returns 0 on success, nonzero on failure.
- ************************************************/
-int nextguess(char *filename, char *guessed);
-
 #endif /* _UTIL_H */
