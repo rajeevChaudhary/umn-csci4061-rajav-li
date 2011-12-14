@@ -1,7 +1,3 @@
-#include "util-http.h"
-
-#define REQ_BUFFER_LEN 2048
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -11,14 +7,20 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include <strings.h>
 #include <pthread.h>
 
+
+#define REQ_BUFFER_LEN 2048
+
+
+
 pthread_mutex_t accept_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-
 int global_socket = -1;
+
+
+
 
 void init(int port) {
     
@@ -50,19 +52,21 @@ void init(int port) {
 
 int accept_connection(void) {
     
-    pthread_mutex_lock(&accept_mutex);
-    
     if (global_socket == -1)
         return -1;
         
     struct sockaddr_in client_addr;
     socklen_t addr_len = sizeof(struct sockaddr);
     
+    
+    pthread_mutex_lock(&accept_mutex);
+    
     int ret = accept(global_socket, (struct sockaddr*)&client_addr, &addr_len);  
     
     pthread_mutex_unlock(&accept_mutex);
     
     return ret;
+    
 }
 
 int get_request(int fd, char *filename) {
@@ -125,10 +129,10 @@ int get_request(int fd, char *filename) {
     }
     
     return 0;
+    
 }
 
 int return_result(int fd, char *content_type, char *buf, int numbytes) {
-    
     
     FILE* stream = fdopen(fd, "w");
     
@@ -142,6 +146,7 @@ int return_result(int fd, char *content_type, char *buf, int numbytes) {
     fclose(stream);
     
     return 0;
+    
 }
 
 int return_error(int fd, char *buf) {
@@ -157,9 +162,5 @@ int return_error(int fd, char *buf) {
     fclose(stream);
     
     return 0;
-}
-
-int nextguess(char *filename, char *guessed) {
-    /* Nothing */
-    return 0;
+    
 }
